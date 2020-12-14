@@ -1,5 +1,21 @@
 version: "3.7"
 services:
+  rest_api:
+    restart: always
+    build: "./backend/rest-api/"
+    container_name: rest-api-service
+    command: /bin/sh -c 'sudo gunicorn -b 0.0.0.0:8082 service.start:app'
+    volumes:
+      - ./backend/rest-api/:/code/app/
+    ports:
+      - 8082:8082
+    env_file:
+      - ./backend/rest-api/.env
+    depends_on:
+      - database
+    links:
+      - database:database
+
   database:
     build: "./backend/database/"
     ports:

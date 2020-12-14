@@ -1,0 +1,7 @@
+[2020-12-14 15:25:45 -0300] [4294] [INFO] Starting gunicorn 20.0.4
+[2020-12-14 15:25:45 -0300] [4294] [INFO] Listening at: http://0.0.0.0:8082 (4294)
+[2020-12-14 15:25:45 -0300] [4294] [INFO] Using worker: sync
+[2020-12-14 15:25:45 -0300] [4295] [INFO] Booting worker with pid: 4295
+[2020-12-14 15:26:23 -0300] [4294] [INFO] Handling signal: int
+[2020-12-14 15:26:23 -0300] [4295] [INFO] Worker exiting (pid: 4295)
+[2020-12-14 15:26:23 -0300] [4294] [INFO] Shutting down: Master
