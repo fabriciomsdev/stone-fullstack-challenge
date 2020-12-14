@@ -1,0 +1,17 @@
+version: "3.7"
+services:
+  database:
+    build: "./backend/database/"
+    ports:
+      - '3307:3306'
+    command: mysqld --default-authentication-plugin=mysql_native_password
+    container_name: mysql-container
+    environment:
+       MYSQL_DATABASE: 'logistic'
+       MYSQL_USER: 'stone'
+       MYSQL_PASSWORD: '77991717025'
+       MYSQL_ROOT_PASSWORD: '77991717025'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./backend/database/data:/var/lib/mysql
+    restart: always
