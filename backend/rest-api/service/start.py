@@ -1,9 +1,9 @@
 import falcon
 from service.resources.work_centers import WorkCentersResource
-from service.midleware import JSONTranslatorMiddleware
 from domain.business_rules import WorkCenterBusinessValidationsRules
 from data.data_source import DBDataSource
-
+from falcon import media
+import rapidjson
 class ApplicationBuilder():
     application_layer = None
 
@@ -12,7 +12,21 @@ class ApplicationBuilder():
         return self
 
     def create_application_layer_obj(self):
-        self.application_layer = falcon.API()
+        self.application_layer = falcon.API(media_type='application/json')
+        return self
+
+    def define_custom_settings_for_application_layer(self):
+        json_handler = media.JSONHandler(
+            dumps=rapidjson.dumps,
+            loads=rapidjson.loads,
+        )
+        extra_handlers = {
+            'application/json': json_handler,
+        }
+
+        self.application_layer.req_options.media_handlers.update(extra_handlers)
+        self.application_layer.resp_options.media_handlers.update(extra_handlers)
+
         return self
 
     def define_comunication_ways(self):
@@ -22,6 +36,7 @@ class ApplicationBuilder():
     def build(self):
         self.create_and_start_database() \
             .create_application_layer_obj() \
+            .define_custom_settings_for_application_layer() \
             .define_comunication_ways()
 
         return self.application_layer
