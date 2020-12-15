@@ -6,10 +6,43 @@ from urllib.parse import urlencode
 import json
 from domain.business_rules import WorkCenterBusinessValidationsRules
 import unittest
-from tests.utils.resources import ResourcesTestCase
-from use_cases.work_centers import CreateAWorkCentersUseCase
+from tests.utils.application_layer import ResourcesTestCase, ResetAllApplicationEachTestCase
+from tests.utils.datasource_layer import ResetDatabaseEachTestCase
+from use_cases.work_centers import WorkCentersUseCases
 from domain.entities import WorkCentersEntity
 from data.repositories import WorkCentersRepository
+from data.data_source import DBDataSource
+
+
+# Data Manipulation Tests
+class WorkCenterDataAccessTest(ResetDatabaseEachTestCase):
+
+    def test_should_persist_a_work_center_in_db(self):
+        qty_of_entities_in_db_before = len(WorkCentersRepository().get_all())
+
+        entity = WorkCentersEntity(region = "SP - São Paulo")
+        WorkCentersRepository().persist(entity)
+
+        qty_of_entities_in_db_after = len(WorkCentersRepository().get_all())
+
+        self.assertNotEqual(qty_of_entities_in_db_before, qty_of_entities_in_db_after)
+
+    def test_should_get_all_work_centers_in_db(self):
+        qty_of_entities_in_db_before = len(WorkCentersRepository().get_all())
+        repository = WorkCentersRepository()
+
+        entity_SP = WorkCentersEntity(region = "SP - São Paulo")
+        entity_RJ = WorkCentersEntity(region = "RJ - Rio de Janeiro")
+        entity_BH = WorkCentersEntity(region = "BH - Belo Horizonte")
+
+        repository.persist(entity_SP)
+        repository.persist(entity_RJ)
+        repository.persist(entity_BH)
+
+        entities_on_db = WorkCentersRepository().get_all()
+
+        self.assertEqual(len(entities_on_db), 3)
+
 
 # BusinessRules Tests
 class WorkCenterBusinessRulesTest(unittest.TestCase):
@@ -19,22 +52,26 @@ class WorkCenterBusinessRulesTest(unittest.TestCase):
 
 
 # Use Cases Tests
-class WorkCenterUseCasesTest(unittest.TestCase):
-    def setUp(self):
-        ApplicationBuilder().create_and_start_database()
-
+class WorkCenterUseCasesTest(ResetDatabaseEachTestCase):
     def test_create_a_work_center_and_return_data_from_db(self):
         qty_of_register_in_db_before = len(WorkCentersRepository().get_all())
-        created_entity = CreateAWorkCentersUseCase().execute(WorkCentersEntity(region = "SP - São Paulo"))
+        created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
         qty_of_register_in_db_after = len(WorkCentersRepository().get_all())
 
         self.assertIsNotNone(created_entity.id)
         self.assertEqual(created_entity.region, "SP - São Paulo")
         self.assertEqual(qty_of_register_in_db_after, qty_of_register_in_db_before + 1)
 
+    def test_get_all_work_centers(self):
+        WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
+        WorkCentersUseCases().create(WorkCentersEntity(region = "RJ - Rio de Janeiro"))
+        WorkCentersUseCases().create(WorkCentersEntity(region = "BH - Belo Horizonte"))
+        
+        work_centers = WorkCentersUseCases().get_all()
+        self.assertEqual(len(work_centers), 3)
 
 # Application Layer Tests
-class WorkCenterResourceTest(ResourcesTestCase):
+class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
 
     def test_block_to_create_a_work_center_with_region_blank(self):
         new_work_center_data = {
@@ -62,6 +99,32 @@ class WorkCenterResourceTest(ResourcesTestCase):
         }
 
         response = self.simulate_post('/work-centers', json=new_work_center_data)
-
+        print(response.content)
         self.assertEqual(response.status, falcon.HTTP_CREATED)
 
+    
+    def test_should_get_work_center_data(self):
+        self.simulate_post('/work-centers', json={
+            'region': "RJ - Rio de Janeiro"
+        })
+
+        self.simulate_post('/work-centers', json={
+            'region': "SP - São Paulo"
+        })
+        
+        response = self.simulate_get('/work-centers', headers = {
+            'content-type': 'application/json'
+        })
+
+        self.assertEqual(response.status, falcon.HTTP_OK)
+        response_data = [json.loads(item) for item in json.loads(response.content)]
+        expected_data = [{
+            "id": 1,
+            "region": "RJ - Rio de Janeiro"
+        }, 
+        {
+            "id": 2,
+            "region": "SP - São Paulo"
+        }]
+
+        self.assertEqual(response_data, expected_data)
