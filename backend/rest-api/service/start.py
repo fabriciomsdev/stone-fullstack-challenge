@@ -16,6 +16,7 @@ class ApplicationBuilder():
         return self
 
     def define_comunication_ways(self):
+        self.application_layer.add_route("/work-centers", WorkCentersResource())
         return self
 
     def build(self):
