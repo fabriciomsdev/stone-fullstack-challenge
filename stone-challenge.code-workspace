@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "backend/rest-api"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}
