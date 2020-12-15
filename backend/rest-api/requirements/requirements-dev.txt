@@ -5,3 +5,4 @@ waitress
 httpie
 SQLAlchemy
 pytest
+pysqlite
