@@ -4,4 +4,4 @@ uwsgi
 waitress
 httpie
 SQLAlchemy
-pysqlite
+python-rapidjson

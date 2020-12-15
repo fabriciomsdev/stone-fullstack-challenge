@@ -5,4 +5,4 @@ waitress
 httpie
 SQLAlchemy
 pytest
-pysqlite
+python-rapidjson
