@@ -26,4 +26,9 @@ class WorkCentersRepository(metaclass=SingletonMeta):
         return [model.to_entity() for model in self._get_DB_session().query(WorkCentersModel).all()]
         
     def find(self, primary_key = None) -> WorkCentersEntity:        
-        return self._get_DB_session().query(WorkCentersModel).find(primary_key)
+        model = self._get_DB_session().query(WorkCentersModel).filter_by(id=primary_key).first()
+
+        if model != None:
+            return model.to_entity()
+        else:
+            return None

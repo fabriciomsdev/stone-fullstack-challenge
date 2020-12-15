@@ -43,6 +43,18 @@ class WorkCenterDataAccessTest(ResetDatabaseEachTestCase):
 
         self.assertEqual(len(entities_on_db), 3)
 
+    def test_should_get_one_work_center_in_db(self):
+        entity_SP = WorkCentersEntity(region = "SP - São Paulo")
+        repository = WorkCentersRepository()
+        
+        entity = repository.persist(entity_SP)
+
+        found_entity = repository.find(entity.id)
+
+        self.assertEqual(entity.id, found_entity.id)
+        self.assertEqual(entity.region, found_entity.region)
+
+
 
 # BusinessRules Tests
 class WorkCenterBusinessRulesTest(unittest.TestCase):
@@ -51,9 +63,9 @@ class WorkCenterBusinessRulesTest(unittest.TestCase):
         assert WorkCenterBusinessValidationsRules().is_not_a_valid_work_center_data_to_register(WorkCentersEntity(**{'region' : ''})) == True
 
 
-# Use Cases Tests
+# Use Cases Tests (Business Layer)
 class WorkCenterUseCasesTest(ResetDatabaseEachTestCase):
-    def test_create_a_work_center_and_return_data_from_db(self):
+    def test_should_create_a_work_center_and_return_data_from_db(self):
         qty_of_register_in_db_before = len(WorkCentersRepository().get_all())
         created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
         qty_of_register_in_db_after = len(WorkCentersRepository().get_all())
@@ -62,7 +74,7 @@ class WorkCenterUseCasesTest(ResetDatabaseEachTestCase):
         self.assertEqual(created_entity.region, "SP - São Paulo")
         self.assertEqual(qty_of_register_in_db_after, qty_of_register_in_db_before + 1)
 
-    def test_get_all_work_centers(self):
+    def test_should_get_all_work_centers(self):
         WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
         WorkCentersUseCases().create(WorkCentersEntity(region = "RJ - Rio de Janeiro"))
         WorkCentersUseCases().create(WorkCentersEntity(region = "BH - Belo Horizonte"))
@@ -70,10 +82,18 @@ class WorkCenterUseCasesTest(ResetDatabaseEachTestCase):
         work_centers = WorkCentersUseCases().get_all()
         self.assertEqual(len(work_centers), 3)
 
+    def test_should_find_a_work_center(self):
+        created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
+        found_entity = WorkCentersUseCases().find(created_entity.id)
+
+        self.assertEqual(found_entity.id, created_entity.id)
+
+        
+
 # Application Layer Tests
 class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
 
-    def test_block_to_create_a_work_center_with_region_blank(self):
+    def test_should_block_to_create_a_work_center_with_region_blank(self):
         new_work_center_data = {
             'region': ""
         }
@@ -83,7 +103,7 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
         self.assertEqual(response.status, falcon.HTTP_BAD_REQUEST)
 
 
-    def test_block_to_create_a_invalid_work_center_none(self):
+    def test_should_block_to_create_a_invalid_work_center_none(self):
         new_work_center_data = {
             'region': None
         }
@@ -93,17 +113,17 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
         self.assertEqual(response.status, falcon.HTTP_BAD_REQUEST)
 
 
-    def test_create_a_work_center(self):
+    def test_should_create_a_work_center(self):
         new_work_center_data = {
             'region': "RJ - Rio de Janeiro"
         }
 
         response = self.simulate_post('/work-centers', json=new_work_center_data)
-        print(response.content)
+        
         self.assertEqual(response.status, falcon.HTTP_CREATED)
 
     
-    def test_should_get_work_center_data(self):
+    def test_should_get_all_work_centers_data(self):
         self.simulate_post('/work-centers', json={
             'region': "RJ - Rio de Janeiro"
         })
@@ -128,3 +148,29 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
         }]
 
         self.assertEqual(response_data, expected_data)
+
+
+    def test_should_get_one_work_center_data(self):
+        self.simulate_post('/work-centers', json={
+            'region': "RJ - Rio de Janeiro"
+        })
+
+        expected_data = {
+            'id': 1,
+            'region': "RJ - Rio de Janeiro"
+        }
+
+        response = self.simulate_get('/work-centers/1')
+
+        self.assertEqual(response.status, falcon.HTTP_200)
+        
+        received_data = json.loads(response.content)
+
+        self.assertEqual(received_data, json.dumps(expected_data))
+        
+
+    def test_should_not_get_one_work_center_data_and_return_404(self):
+        response = self.simulate_get('/work-centers/1')
+
+        self.assertEqual(response.status, falcon.HTTP_404)
+

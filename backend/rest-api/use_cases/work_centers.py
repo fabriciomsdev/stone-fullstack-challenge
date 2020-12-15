@@ -17,6 +17,13 @@ class WorkCentersUseCases():
     def get_all(self) -> list:
         return WorkCentersRepository().get_all()
 
+    def find(self, primary_key: int) -> WorkCentersEntity:
+        if primary_key == None or primary_key == 0:
+            raise Exception(WorkCenterOperationsRejectionMessages.NEED_A_ID_TO_FIND)
+        
+        return WorkCentersRepository().find(primary_key)
+
+
 
 
 

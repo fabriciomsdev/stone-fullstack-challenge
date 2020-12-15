@@ -1,5 +1,5 @@
 import falcon
-from service.resources.work_centers import WorkCentersResource
+from service.resources.work_centers import WorkCentersResource, WorkCenterResource
 from domain.business_rules import WorkCenterBusinessValidationsRules
 from data.data_source import DBDataSource
 from falcon import media
@@ -31,6 +31,8 @@ class ApplicationBuilder():
 
     def define_comunication_ways(self):
         self.application_layer.add_route("/work-centers", WorkCentersResource())
+        self.application_layer.add_route("/work-centers/{primary_key}", WorkCenterResource())
+
         return self
 
     def build(self):
