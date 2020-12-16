@@ -36,10 +36,10 @@ class ApplicationBuilder():
         return self
 
     def build(self):
-        self.create_and_start_database() \
-            .create_application_layer_obj() \
-            .define_custom_settings_for_application_layer() \
-            .define_comunication_ways()
+        (self.create_and_start_database() 
+            .create_application_layer_obj() 
+            .define_custom_settings_for_application_layer() 
+            .define_comunication_ways())
 
         return self.application_layer
 

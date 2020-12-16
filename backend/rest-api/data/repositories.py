@@ -10,14 +10,11 @@ from utils.logger import Logger
 class WorkCentersRepository(UnitOfWork):
 
     def persist(self, entity: WorkCentersEntity) -> WorkCentersEntity:
-        # convert to model
         model = WorkCentersModel(region=entity.region)
 
-        # use SQLAlchemy to persist
         dbSession = self._get_transaction_session()
         dbSession.add(model)
 
-        #return business entity
         return model.to_entity()
 
     def update(self, entity: WorkCentersEntity) -> WorkCentersEntity:
@@ -38,10 +35,10 @@ class WorkCentersRepository(UnitOfWork):
         ]
         
     def find(self, primary_key = None) -> WorkCentersEntity:        
-        model = self._get_transaction_session() \
-                    .query(WorkCentersModel) \
-                    .filter_by(id=primary_key) \
-                    .first()
+        model = (self._get_transaction_session()
+                    .query(WorkCentersModel)
+                    .filter_by(id=primary_key)
+                    .first())
 
         if model != None:
             return model.to_entity()
@@ -50,7 +47,6 @@ class WorkCentersRepository(UnitOfWork):
 
     def delete(self, entity: WorkCentersEntity) -> bool:   
         try:
-            print(entity.id)
             dbSession = self._get_transaction_session(expire_on_commit=True)
             table = dbSession.query(WorkCentersModel)
             filter_result = table.filter(WorkCentersModel.id == entity.id)
