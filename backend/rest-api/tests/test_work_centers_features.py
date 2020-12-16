@@ -18,18 +18,19 @@ from data.data_source import DBDataSource
 class WorkCenterDataAccessTest(ResetDatabaseEachTestCase):
 
     def test_should_persist_a_work_center_in_db(self):
-        qty_of_entities_in_db_before = len(WorkCentersRepository().get_all())
+        repository = WorkCentersRepository(self._data_source)
+        qty_of_entities_in_db_before = len(repository.get_all())
 
         entity = WorkCentersEntity(region = "SP - São Paulo")
-        WorkCentersRepository().persist(entity)
+        repository.persist(entity)
+        repository.save_transaction()
 
-        qty_of_entities_in_db_after = len(WorkCentersRepository().get_all())
+        qty_of_entities_in_db_after = len(repository.get_all())
 
         self.assertNotEqual(qty_of_entities_in_db_before, qty_of_entities_in_db_after)
 
     def test_should_get_all_work_centers_in_db(self):
-        qty_of_entities_in_db_before = len(WorkCentersRepository().get_all())
-        repository = WorkCentersRepository()
+        repository = WorkCentersRepository(self._data_source)
 
         entity_SP = WorkCentersEntity(region = "SP - São Paulo")
         entity_RJ = WorkCentersEntity(region = "RJ - Rio de Janeiro")
@@ -38,59 +39,82 @@ class WorkCenterDataAccessTest(ResetDatabaseEachTestCase):
         repository.persist(entity_SP)
         repository.persist(entity_RJ)
         repository.persist(entity_BH)
+        repository.save_transaction()
 
-        entities_on_db = WorkCentersRepository().get_all()
+        entities_on_db = repository.get_all()
+
+        for entity in entities_on_db: print(entity.__dict__)
 
         self.assertEqual(len(entities_on_db), 3)
 
     def test_should_get_one_work_center_in_db(self):
+        repository = WorkCentersRepository(self._data_source)
         entity_SP = WorkCentersEntity(region = "SP - São Paulo")
-        repository = WorkCentersRepository()
         
         entity = repository.persist(entity_SP)
+        repository.save_transaction()
+        
+        all_entities = repository.get_all()
+        last_entity_added = all_entities[len(all_entities) - 1]
 
-        found_entity = repository.find(entity.id)
-
-        self.assertEqual(entity.id, found_entity.id)
-        self.assertEqual(entity.region, found_entity.region)
+        self.assertEqual(entity.region, last_entity_added.region)
+        self.assertIsNotNone(last_entity_added.id)
 
     def test_should_delete_one_work_center_in_db(self):
         entity_SP = WorkCentersEntity(region = "SP - São Paulo")
-        repository = WorkCentersRepository()
+        repository = WorkCentersRepository(self._data_source)
+
         entity = repository.persist(entity_SP)
+        repository.save_transaction()
 
         repository.delete(entity)
+        repository.save_transaction()
+
         found_entity = repository.find(entity.id)
 
         self.assertIsNone(found_entity)
 
     def test_should_update_one_work_center_in_db(self):
         entity_SP = WorkCentersEntity(region = "SP - São Paulo")
-        repository = WorkCentersRepository()
-        entity = repository.persist(entity_SP)
+        repository = WorkCentersRepository(self._data_source)
         new_name = "SP - São Paulo 2"
 
-        entity.region = new_name
-        repository.update(entity)
-        entity_updated = repository.find(entity.id)
+        entity = repository.persist(entity_SP)
+        repository.save_transaction()
 
-        self.assertEqual(entity_updated.region, new_name)
+        entity.region = new_name
+
+        repository.update(entity)
+        repository.save_transaction()
+
+        self.assertEqual(entity.region, new_name)
 
 
 
 # BusinessRules Tests
 class WorkCenterBusinessRulesTest(unittest.TestCase):
+    rules = WorkCenterBusinessValidationsRules()
+
     def test_should_invalid_a_work_center_without_region(self):
-        assert WorkCenterBusinessValidationsRules().is_not_a_valid_work_center_data_to_register(WorkCentersEntity()) == True
-        assert WorkCenterBusinessValidationsRules().is_not_a_valid_work_center_data_to_register(WorkCentersEntity(**{'region' : ''})) == True
+        wc_empty = WorkCentersEntity()
+        wc_without_region = WorkCentersEntity(**{'region': ''})
+
+        res_of_wc_empty = self.rules.is_not_a_valid_work_center_data_to_register(wc_empty)
+        res_of_wc_without_region = self.rules.is_not_a_valid_work_center_data_to_register(wc_without_region)
+
+        self.assertEqual(res_of_wc_empty, True)
+        self.assertEqual(res_of_wc_without_region, True)
 
 
 # Use Cases Tests (Business Layer)
 class WorkCenterUseCasesTest(ResetDatabaseEachTestCase):
     def test_should_create_a_work_center_and_return_data_from_db(self):
-        qty_of_register_in_db_before = len(WorkCentersRepository().get_all())
+        repository = WorkCentersRepository(self._data_source)
+        qty_of_register_in_db_before = len(repository.get_all())
+
         created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
-        qty_of_register_in_db_after = len(WorkCentersRepository().get_all())
+
+        qty_of_register_in_db_after = len(repository.get_all())
 
         self.assertIsNotNone(created_entity.id)
         self.assertEqual(created_entity.region, "SP - São Paulo")
@@ -163,6 +187,15 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
 
     
     def test_should_get_all_work_centers_data(self):
+        expected_data = [{
+            "id": 1,
+            "region": "RJ - Rio de Janeiro"
+        },
+            {
+            "id": 2,
+            "region": "SP - São Paulo"
+        }]
+
         self.simulate_post('/work-centers', json={
             'region': "RJ - Rio de Janeiro"
         })
@@ -174,37 +207,28 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
         response = self.simulate_get('/work-centers', headers = {
             'content-type': 'application/json'
         })
+        
+        response_data = [json.loads(item) for item in json.loads(response.content)]
 
         self.assertEqual(response.status, falcon.HTTP_OK)
-        response_data = [json.loads(item) for item in json.loads(response.content)]
-        expected_data = [{
-            "id": 1,
-            "region": "RJ - Rio de Janeiro"
-        }, 
-        {
-            "id": 2,
-            "region": "SP - São Paulo"
-        }]
-
         self.assertEqual(response_data, expected_data)
 
 
     def test_should_get_one_work_center_data(self):
-        self.simulate_post('/work-centers', json={
-            'region': "RJ - Rio de Janeiro"
-        })
-
         expected_data = {
             'id': 1,
             'region': "RJ - Rio de Janeiro"
         }
 
-        response = self.simulate_get('/work-centers/1')
+        self.simulate_post('/work-centers', json={
+            'region': "RJ - Rio de Janeiro"
+        })
 
-        self.assertEqual(response.status, falcon.HTTP_200)
+        response = self.simulate_get('/work-centers/1')
         
         received_data = json.loads(response.content)
 
+        self.assertEqual(response.status, falcon.HTTP_200)
         self.assertEqual(received_data, json.dumps(expected_data))
         
 

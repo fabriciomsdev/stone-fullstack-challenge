@@ -1,7 +1,6 @@
 from threading import Lock, Thread
-from data.data_source import DBDataSource
 
-class SingletonMeta(type):
+class Singleton(type):
     """
     Abstraction of Singleton Thread safe 
     """
@@ -19,21 +18,26 @@ class SingletonMeta(type):
         return cls._instance_list[cls]
 
 
-class DBRepository():
+class DataSource(object):
+    def connect_to_source(self):
+        pass
+
+
+class DBRepository(object):
     _db_data_source = None
 
-    def __init__(self, db_data_source: DBDataSource):
+    def __init__(self, db_data_source: DataSource):
         self._db_data_source = db_data_source
 
-    def get_db_data_source(self) -> DBDataSource:
+    def get_db_data_source(self) -> DataSource:
         return self._db_data_source
 
 
 class RepositoryWithUnitOfWork(DBRepository):
     _transaction_session = None
 
-    def __init__(self, db_data_source: DBDataSource):
-        super(RepositoryWithUnitOfWork).__init__(db_data_source)
+    def __init__(self, db_data_source: DataSource):
+        super(RepositoryWithUnitOfWork, self).__init__(db_data_source)
         self._transaction_session = self.get_db_data_source().create_a_session()
 
     def _define_transaction_session(self):

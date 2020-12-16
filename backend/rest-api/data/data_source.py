@@ -2,14 +2,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from data.orm import BaseModel
-from utils.patterns import SingletonMeta
+from utils.patterns import Singleton, DataSource
 from sqlalchemy import MetaData
 import contextlib
 
-class DBDataSource(metaclass=SingletonMeta):
+
+class DBDataSource(DataSource, metaclass=Singleton):
     data_base_engine = None
 
-    def connect_in_database_engine(self, connection_string):
+    def _connect_in_database_engine(self, connection_string):
         self.data_base_engine = create_engine(connection_string)
         return self
 
@@ -17,8 +18,8 @@ class DBDataSource(metaclass=SingletonMeta):
         BaseModel.metadata.create_all(self.data_base_engine)
         return self
 
-    def build(self, connection_string = ''):
-        self.connect_in_database_engine(connection_string).create_database()
+    def connect_to_source(self, connection_string = ''):
+        self._connect_in_database_engine(connection_string).create_database()
         return self
 
     def _truncate_database(self, ignore_foreign_keys = True):

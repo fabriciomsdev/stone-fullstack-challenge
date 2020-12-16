@@ -7,8 +7,12 @@ from utils.exceptions import UseCaseException
 
 
 class WorkCentersUseCases():
-    _work_centers_repository = WorkCentersRepository(db_data_source = DBDataSource())
-    _business_rules = WorkCenterBusinessValidationsRules()
+    _work_centers_repository = None
+    _business_rules = None
+
+    def __init__(self):
+        self._work_centers_repository = WorkCentersRepository(db_data_source = DBDataSource())
+        self._business_rules = WorkCenterBusinessValidationsRules()        
 
     def create(self, work_center: WorkCentersEntity = WorkCentersEntity()) -> WorkCentersEntity:
         if work_center == {}:
@@ -20,21 +24,20 @@ class WorkCentersUseCases():
                 WorkCenterOperationsRejectionMessages.INVALID_DATA_TO_REGISTER)
 
         try:
-            entity_created = self._work_centers_repository.persist(work_center)
+            model_created = self._work_centers_repository.persist(work_center)
             self._work_centers_repository.save_transaction()
         except Exception as ex:
             self._work_centers_repository.revert_transaction()
             raise ex
 
-        return entity_created
+        return model_created.to_entity()
 
     def get_all(self) -> list:
-        return self._work_centers_repository.get_all()
+        return [ model.to_entity() for model in self._work_centers_repository.get_all() ]
 
     def find(self, primary_key: int) -> WorkCentersEntity:
         if primary_key == None or primary_key == 0:
-            raise UseCaseException(
-                WorkCenterOperationsRejectionMessages.NEED_A_ID_TO_FIND)
+            raise UseCaseException(WorkCenterOperationsRejectionMessages.NEED_A_ID_TO_FIND)
 
         return self._work_centers_repository.find(primary_key)
 
@@ -48,8 +51,9 @@ class WorkCentersUseCases():
 
     def update(self, entity: WorkCentersEntity) -> WorkCentersEntity:
         try:
-            self._work_centers_repository.update(entity)
+            model_updated = self._work_centers_repository.update(entity)
             self._work_centers_repository.save_transaction()
+            return model_updated.to_entity()
         except Exception as ex:
             self._work_centers_repository.revert_transaction()
             raise ex

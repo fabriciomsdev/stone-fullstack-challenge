@@ -9,15 +9,15 @@ from utils.logger import Logger
 
 class WorkCentersRepository(RepositoryWithUnitOfWork):
 
-    def persist(self, entity: WorkCentersEntity) -> WorkCentersEntity:
+    def persist(self, entity: WorkCentersEntity) -> WorkCentersModel:
         model = WorkCentersModel(region=entity.region)
 
         dbSession = self._get_transaction_session()
         dbSession.add(model)
+        
+        return model
 
-        return model.to_entity()
-
-    def update(self, entity: WorkCentersEntity) -> WorkCentersEntity:
+    def update(self, entity: WorkCentersEntity) -> WorkCentersModel:
         try:
             dbSession = self._get_transaction_session(expire_on_commit=True)
             table = dbSession.query(WorkCentersModel)
@@ -25,16 +25,14 @@ class WorkCentersRepository(RepositoryWithUnitOfWork):
             model = table.filter_by(id=entity.id).first()
             model.fill_with_entity(entity)
 
-            return model.to_entity()
+            return model
         except Exception as ex:
             raise ex
 
     def get_all(self) -> list:
-        return [
-            model.to_entity() for model in self._get_transaction_session().query(WorkCentersModel).all()
-        ]
+        return self._get_transaction_session().query(WorkCentersModel).all() 
 
-    def find(self, primary_key=None) -> WorkCentersEntity:
+    def find(self, primary_key=None) -> WorkCentersModel:
         model = (self._get_transaction_session()
                  .query(WorkCentersModel)
                  .filter_by(id=primary_key)

@@ -8,7 +8,7 @@ class ApplicationBuilder():
     application_layer = None
 
     def create_and_start_database(self):
-        DBDataSource().build('sqlite:///db.sqlite3')
+        DBDataSource().connect_to_source('sqlite:///db.sqlite3')
         return self
 
     def create_application_layer_obj(self):

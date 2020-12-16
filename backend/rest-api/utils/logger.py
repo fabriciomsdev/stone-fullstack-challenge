@@ -1,5 +1,5 @@
 from loguru import logger
-from utils.patterns import SingletonMeta
+from utils.patterns import Singleton
 
 class Logger():
     @staticmethod
