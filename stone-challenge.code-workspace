@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "backend/rest-api"
+		},
+		{
+			"path": "IaC"
 		}
 	],
 	"settings": {
