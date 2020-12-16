@@ -2,15 +2,16 @@ from data.repositories import WorkCentersRepository
 from domain.entities import WorkCentersEntity
 from domain.business_rules import WorkCenterBusinessValidationsRules
 from domain.business_messages import WorkCenterOperationsRejectionMessages
+from utils.exceptions import UseCaseException
 
 class WorkCentersUseCases():
 
     def create(self, work_center: WorkCentersEntity = WorkCentersEntity()) -> WorkCentersEntity:
         if work_center == {}:
-            raise Exception(WorkCenterOperationsRejectionMessages.INVALID_REGION_NAME)
+            raise UseCaseException(WorkCenterOperationsRejectionMessages.INVALID_REGION_NAME)
 
         if WorkCenterBusinessValidationsRules().is_not_a_valid_work_center_data_to_register(work_center):
-            raise Exception(WorkCenterOperationsRejectionMessages.INVALID_DATA_TO_REGISTER)
+            raise UseCaseException(WorkCenterOperationsRejectionMessages.INVALID_DATA_TO_REGISTER)
         
         return WorkCentersRepository().persist(work_center)
 
@@ -19,7 +20,7 @@ class WorkCentersUseCases():
 
     def find(self, primary_key: int) -> WorkCentersEntity:
         if primary_key == None or primary_key == 0:
-            raise Exception(WorkCenterOperationsRejectionMessages.NEED_A_ID_TO_FIND)
+            raise UseCaseException(WorkCenterOperationsRejectionMessages.NEED_A_ID_TO_FIND)
         
         return WorkCentersRepository().find(primary_key)
 

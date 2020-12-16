@@ -3,5 +3,5 @@ from utils.patterns import SingletonMeta
 
 class Logger():
     @staticmethod
-    def log(self, message: str):
+    def log(message: str):
         logger.debug(message)

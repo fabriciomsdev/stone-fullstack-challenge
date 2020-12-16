@@ -3,6 +3,8 @@ from data.models import WorkCentersModel
 from utils.patterns import SingletonMeta
 from data.data_source import DBDataSource
 from sqlalchemy.sql.schema import Column
+from utils.exceptions import DataLayerException
+from utils.logger import Logger
 
 class WorkCentersRepository(metaclass=SingletonMeta):
     def __init__(self):
@@ -58,8 +60,9 @@ class WorkCentersRepository(metaclass=SingletonMeta):
                 filter_result.delete()
                 dbSession.commit()
             else:
-                raise Exception("Model to delete was not found on data Source")
+                raise DataLayerException("Model to delete was not found on data Source")
 
             return True
         except Exception as ex:
+            Logger.log(str(ex))
             return False
