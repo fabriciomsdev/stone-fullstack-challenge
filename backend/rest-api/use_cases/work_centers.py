@@ -1,4 +1,5 @@
 from data.repositories import WorkCentersRepository
+from data.data_source import DBDataSource
 from domain.entities import WorkCentersEntity
 from domain.business_rules import WorkCenterBusinessValidationsRules
 from domain.business_messages import WorkCenterOperationsRejectionMessages
@@ -6,7 +7,7 @@ from utils.exceptions import UseCaseException
 
 
 class WorkCentersUseCases():
-    _work_centers_repository = WorkCentersRepository()
+    _work_centers_repository = WorkCentersRepository(db_data_source = DBDataSource())
     _business_rules = WorkCenterBusinessValidationsRules()
 
     def create(self, work_center: WorkCentersEntity = WorkCentersEntity()) -> WorkCentersEntity:

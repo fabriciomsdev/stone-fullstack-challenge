@@ -19,14 +19,25 @@ class SingletonMeta(type):
         return cls._instance_list[cls]
 
 
-class UnitOfWork():
+class DBRepository():
+    _db_data_source = None
+
+    def __init__(self, db_data_source: DBDataSource):
+        self._db_data_source = db_data_source
+
+    def get_db_data_source(self) -> DBDataSource:
+        return self._db_data_source
+
+
+class RepositoryWithUnitOfWork(DBRepository):
     _transaction_session = None
-    
-    def __init__(self):
-        self._transaction_session = DBDataSource().create_a_session()
+
+    def __init__(self, db_data_source: DBDataSource):
+        super(RepositoryWithUnitOfWork).__init__(db_data_source)
+        self._transaction_session = self.get_db_data_source().create_a_session()
 
     def _define_transaction_session(self):
-        self._transaction_session = DBDataSource().create_a_session()
+        self._transaction_session = self.get_db_data_source().create_a_session()
 
     def _get_transaction_session(self, **args):
         if self._transaction_session == None:
@@ -39,3 +50,5 @@ class UnitOfWork():
 
     def revert_transaction(self):
         self._get_transaction_session().rollback()
+
+

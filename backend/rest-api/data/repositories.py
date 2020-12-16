@@ -1,13 +1,13 @@
 from domain.entities import WorkCentersEntity
 from data.models import WorkCentersModel
-from utils.patterns import UnitOfWork
+from utils.patterns import RepositoryWithUnitOfWork
 from data.data_source import DBDataSource
 from sqlalchemy.sql.schema import Column
 from utils.exceptions import DataLayerException
 from utils.logger import Logger
 
 
-class WorkCentersRepository(UnitOfWork):
+class WorkCentersRepository(RepositoryWithUnitOfWork):
 
     def persist(self, entity: WorkCentersEntity) -> WorkCentersEntity:
         model = WorkCentersModel(region=entity.region)
