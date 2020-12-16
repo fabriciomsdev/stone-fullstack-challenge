@@ -54,6 +54,28 @@ class WorkCenterDataAccessTest(ResetDatabaseEachTestCase):
         self.assertEqual(entity.id, found_entity.id)
         self.assertEqual(entity.region, found_entity.region)
 
+    def test_should_delete_one_work_center_in_db(self):
+        entity_SP = WorkCentersEntity(region = "SP - São Paulo")
+        repository = WorkCentersRepository()
+        entity = repository.persist(entity_SP)
+
+        repository.delete(entity)
+        found_entity = repository.find(entity.id)
+
+        self.assertIsNone(found_entity)
+
+    def test_should_update_one_work_center_in_db(self):
+        entity_SP = WorkCentersEntity(region = "SP - São Paulo")
+        repository = WorkCentersRepository()
+        entity = repository.persist(entity_SP)
+        new_name = "SP - São Paulo 2"
+
+        entity.region = new_name
+        repository.update(entity)
+        entity_updated = repository.find(entity.id)
+
+        self.assertEqual(entity_updated.region, new_name)
+
 
 
 # BusinessRules Tests
@@ -87,6 +109,23 @@ class WorkCenterUseCasesTest(ResetDatabaseEachTestCase):
         found_entity = WorkCentersUseCases().find(created_entity.id)
 
         self.assertEqual(found_entity.id, created_entity.id)
+
+    def test_should_delete_a_work_center(self):
+        created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
+        WorkCentersUseCases().delete(created_entity)
+        found_entity = WorkCentersUseCases().find(created_entity.id)
+
+        self.assertIsNone(found_entity)
+
+    def test_should_update_a_work_center(self):
+        created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
+        new_region = "RJ - Rio de Janeiro - Madureira"
+        created_entity.region = new_region
+        WorkCentersUseCases().update(created_entity)
+        found_entity = WorkCentersUseCases().find(created_entity.id)
+
+        self.assertEqual(found_entity.region, new_region)
+
 
         
 
@@ -173,4 +212,24 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
         response = self.simulate_get('/work-centers/1')
 
         self.assertEqual(response.status, falcon.HTTP_404)
+
+    def test_should_delete_one_work_center_data(self):
+        self.simulate_post('/work-centers', json={
+            'region': "RJ - Rio de Janeiro"
+        })
+
+        response = self.simulate_delete('/work-centers/1')
+
+        self.assertEqual(response.status, falcon.HTTP_200)
+
+    def test_should_update_one_work_center_data(self):
+        self.simulate_post('/work-centers', json={
+            'region': "RJ - Rio de Janeiro"
+        })
+
+        response = self.simulate_put('/work-centers/1', json={
+            'region': "RJ - Rio de Janeiro 4"
+        })
+
+        self.assertEqual(response.status, falcon.HTTP_200)
 

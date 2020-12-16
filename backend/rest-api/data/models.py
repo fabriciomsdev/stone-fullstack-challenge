@@ -8,5 +8,10 @@ class WorkCentersModel(BaseModel, WorkCentersEntity):
     id = Column(Integer, primary_key=True)
     region = Column(String)
 
+    def fill_with_entity(self, entity: WorkCentersEntity = None):
+        if entity != None:
+            self.id = entity.id
+            self.region = entity.region
+
     def to_entity(self) -> WorkCentersEntity:
         return WorkCentersEntity(self.region, self.id)

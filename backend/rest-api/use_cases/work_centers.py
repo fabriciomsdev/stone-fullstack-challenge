@@ -23,6 +23,12 @@ class WorkCentersUseCases():
         
         return WorkCentersRepository().find(primary_key)
 
+    def delete(self, entity: WorkCentersEntity) -> bool:        
+        return WorkCentersRepository().delete(entity)
+
+    def update(self, entity: WorkCentersEntity) -> WorkCentersEntity:        
+        return WorkCentersRepository().update(entity)
+
 
 
 
