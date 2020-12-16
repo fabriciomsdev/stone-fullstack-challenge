@@ -2,6 +2,6 @@ falcon==2.0.0
 gunicorn
 uwsgi
 waitress
-httpie
 SQLAlchemy
 python-rapidjson
+loguru
