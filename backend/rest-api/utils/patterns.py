@@ -1,4 +1,5 @@
 from threading import Lock, Thread
+from data.data_source import DBDataSource
 
 class SingletonMeta(type):
     """
@@ -16,3 +17,25 @@ class SingletonMeta(type):
                 cls._instance_list[cls] = new_instance
 
         return cls._instance_list[cls]
+
+
+class UnitOfWork():
+    _transaction_session = None
+    
+    def __init__(self):
+        self._transaction_session = DBDataSource().create_a_session()
+
+    def _define_transaction_session(self):
+        self._transaction_session = DBDataSource().create_a_session()
+
+    def _get_transaction_session(self, **args):
+        if self._transaction_session == None:
+            self._define_transaction_session()
+
+        return self._transaction_session
+        
+    def save_transaction(self):
+        self._get_transaction_session().commit()
+
+    def revert_transaction(self):
+        self._get_transaction_session().rollback()
