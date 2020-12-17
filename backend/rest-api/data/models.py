@@ -1,11 +1,11 @@
 from domain.entities import WorkCentersEntity
 from data.orm import BaseModel
 from sqlalchemy import Column, String, Integer, ForeignKey
+from typing import TypeVar, Generic
+from data.abstract import AbstractModel
 
-class WorkCentersModel(BaseModel, WorkCentersEntity):
+class WorkCentersModel(AbstractModel[WorkCentersEntity], BaseModel, WorkCentersEntity):
     __tablename__ = 'work_centers'
-
-    id = Column(Integer, primary_key=True)
     region = Column(String)
 
     def fill_with_entity(self, entity: WorkCentersEntity = None):

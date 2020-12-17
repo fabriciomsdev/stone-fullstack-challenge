@@ -1,17 +1,16 @@
 import falcon
 from falcon import testing
-import pytest
-from service.start import ApplicationBuilder, app
-from urllib.parse import urlencode
-import json
-from domain.business_rules import WorkCenterBusinessValidationsRules
 import unittest
+import json
+
 from tests.utils.application_layer import ResourcesTestCase, ResetAllApplicationEachTestCase
 from tests.utils.datasource_layer import ResetDatabaseEachTestCase
+
+from service.start import ApplicationBuilder, app
 from use_cases.work_centers import WorkCentersUseCases
 from domain.entities import WorkCentersEntity
 from data.repositories import WorkCentersRepository
-from data.data_source import DBDataSource
+from domain.business_rules import WorkCenterBusinessValidationsRules
 
 
 # Data Manipulation Tests
@@ -19,13 +18,13 @@ class WorkCenterDataAccessTest(ResetDatabaseEachTestCase):
 
     def test_should_persist_a_work_center_in_db(self):
         repository = WorkCentersRepository(self._data_source)
-        qty_of_entities_in_db_before = len(repository.get_all())
+        qty_of_entities_in_db_before = len(repository.fetch())
 
         entity = WorkCentersEntity(region = "SP - São Paulo")
         repository.persist(entity)
         repository.save_transaction()
 
-        qty_of_entities_in_db_after = len(repository.get_all())
+        qty_of_entities_in_db_after = len(repository.fetch())
 
         self.assertNotEqual(qty_of_entities_in_db_before, qty_of_entities_in_db_after)
 
@@ -41,7 +40,7 @@ class WorkCenterDataAccessTest(ResetDatabaseEachTestCase):
         repository.persist(entity_BH)
         repository.save_transaction()
 
-        entities_on_db = repository.get_all()
+        entities_on_db = repository.fetch()
 
         for entity in entities_on_db: print(entity.__dict__)
 
@@ -54,7 +53,7 @@ class WorkCenterDataAccessTest(ResetDatabaseEachTestCase):
         entity = repository.persist(entity_SP)
         repository.save_transaction()
         
-        all_entities = repository.get_all()
+        all_entities = repository.fetch()
         last_entity_added = all_entities[len(all_entities) - 1]
 
         self.assertEqual(entity.region, last_entity_added.region)
@@ -110,11 +109,11 @@ class WorkCenterBusinessRulesTest(unittest.TestCase):
 class WorkCenterUseCasesTest(ResetDatabaseEachTestCase):
     def test_should_create_a_work_center_and_return_data_from_db(self):
         repository = WorkCentersRepository(self._data_source)
-        qty_of_register_in_db_before = len(repository.get_all())
+        qty_of_register_in_db_before = len(repository.fetch())
 
         created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
 
-        qty_of_register_in_db_after = len(repository.get_all())
+        qty_of_register_in_db_after = len(repository.fetch())
 
         self.assertIsNotNone(created_entity.id)
         self.assertEqual(created_entity.region, "SP - São Paulo")
@@ -142,10 +141,12 @@ class WorkCenterUseCasesTest(ResetDatabaseEachTestCase):
         self.assertIsNone(found_entity)
 
     def test_should_update_a_work_center(self):
-        created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
         new_region = "RJ - Rio de Janeiro - Madureira"
+        created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
+        
         created_entity.region = new_region
         WorkCentersUseCases().update(created_entity)
+
         found_entity = WorkCentersUseCases().find(created_entity.id)
 
         self.assertEqual(found_entity.region, new_region)

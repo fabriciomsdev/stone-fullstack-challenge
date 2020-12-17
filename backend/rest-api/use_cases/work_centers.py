@@ -33,7 +33,7 @@ class WorkCentersUseCases():
         return model_created.to_entity()
 
     def get_all(self) -> list:
-        return [ model.to_entity() for model in self._work_centers_repository.get_all() ]
+        return [ model.to_entity() for model in self._work_centers_repository.fetch() ]
 
     def find(self, primary_key: int) -> WorkCentersEntity:
         if primary_key == None or primary_key == 0:
