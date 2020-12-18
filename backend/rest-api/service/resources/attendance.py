@@ -21,7 +21,7 @@ class AttendenceResourceMixin():
             return parse_date_time_str_to_datetime(date_in_json)
         except Exception as ex:
             raise ApplicationLayerException(
-                AttendanceOperationsRejectionMessages.Attendance_DATE_IS_INVALID)
+                AttendanceOperationsRejectionMessages.ATTENDANCE_DATE_IS_INVALID)
 
 
 class AttendanceListResource(AttendenceResourceMixin):

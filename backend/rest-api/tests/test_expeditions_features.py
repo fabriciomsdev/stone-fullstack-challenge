@@ -24,7 +24,7 @@ class ExpeditionDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCrea
         repository.save_transaction()
 
         db_entities = repository.fetch()
-        qty_of_terminals_in_wc = work_center_model.to_entity().qty_of_terminals_on_stock()
+        qty_of_terminals_in_wc = work_center_model.to_entity().get_qty_of_terminals_received()
 
         self.assertEqual(len(db_entities), 1)
         self.assertEqual(qty_of_terminals_in_wc, 100)
@@ -47,7 +47,7 @@ class ExpeditionDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCrea
         repository.update(third_expedition.to_entity())
         repository.save_transaction()
 
-        qty_in_wc_after_cancel_one = work_center_model.qty_of_terminals_on_stock()
+        qty_in_wc_after_cancel_one = work_center_model.get_qty_of_terminals_received()
 
         self.assertEqual(qty_in_wc_after_cancel_one, 700)
         self.assertTrue(third_expedition.was_canceled)
@@ -166,16 +166,16 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
             }
         }
         expected_work_center_data = {
-            "id": 1, 
-            "region": "RJ - Rio de Janeiro", 
+            "attendance": [],
             "expeditions": [
-                { 
+                {
                     "id": 1,
-                    "qty_of_terminals": 1000, 
+                    "qty_of_terminals": 1000,
                     "was_canceled": True,
                 }
             ],
-            "attendance": []
+            "id": 1, 
+            "region": "RJ - Rio de Janeiro"
         }
         work_center_json = self._create_a_work_center_by_application_layer()
         expedition_data = {

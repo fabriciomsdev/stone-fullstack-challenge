@@ -1,7 +1,7 @@
 from data.repositories import AttendanceRepository
 from data.data_source import DBDataSource
 from domain.entities import AttendanceEntity
-from domain.business_rules import WorkCenterBusinessValidationsRules
+from domain.business_rules import WorkCenterBusinessRules
 from domain.business_messages import AttendanceOperationsRejectionMessages, DefaultOperationsRejectionsMessages
 from utils.exceptions import UseCaseException
 
@@ -21,7 +21,7 @@ class AttendanceUseCases():
             raise UseCaseException(AttendanceOperationsRejectionMessages.QTY_OF_TERMINALS_IS_REQUIRED)
 
         if attendance.attendance_date == None:
-            raise UseCaseException(AttendanceOperationsRejectionMessages.Attendance_DATE_IS_REQUIRED)
+            raise UseCaseException(AttendanceOperationsRejectionMessages.ATTENDANCE_DATE_IS_REQUIRED)
 
         try:
             model_created = self._attendance_repository.persist(attendance)

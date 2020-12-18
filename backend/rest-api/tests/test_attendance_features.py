@@ -26,10 +26,10 @@ class AttendanceDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCrea
         repository.save_transaction()
 
         db_entities = repository.fetch()
-        qty_of_terminals_used = WorkCentersRepository(self._data_source).find(work_center_model.id).qty_of_terminals_used()
+        get_qty_of_terminals_used = WorkCentersRepository(self._data_source).find(work_center_model.id).get_qty_of_terminals_used()
 
         self.assertEqual(len(db_entities), 1)
-        self.assertEqual(qty_of_terminals_used, 1)
+        self.assertEqual(get_qty_of_terminals_used, 1)
 
 
     def test_should_cancel_a_attendance(self):
@@ -49,7 +49,7 @@ class AttendanceDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCrea
         repository.update(third_attendance.to_entity())
         repository.save_transaction()
 
-        qty_used_after_cancel_one = work_center_model.qty_of_terminals_used()
+        qty_used_after_cancel_one = work_center_model.get_qty_of_terminals_used()
 
         self.assertEqual(qty_used_after_cancel_one, 2)
         self.assertTrue(third_attendance.was_canceled)

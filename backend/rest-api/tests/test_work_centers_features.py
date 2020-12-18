@@ -10,7 +10,7 @@ from service.start import ApplicationBuilder, app
 from use_cases.work_centers import WorkCentersUseCases
 from domain.entities import WorkCentersEntity
 from data.repositories import WorkCentersRepository
-from domain.business_rules import WorkCenterBusinessValidationsRules
+from domain.business_rules import WorkCenterBusinessRules
 
 
 # Data Manipulation Tests
@@ -90,7 +90,7 @@ class WorkCenterDataAccessTest(ResetDatabaseEachTestCase):
 
 # BusinessRules Tests
 class WorkCenterBusinessRulesTest(unittest.TestCase):
-    rules = WorkCenterBusinessValidationsRules()
+    rules = WorkCenterBusinessRules()
 
     def test_should_invalid_a_work_center_without_region(self):
         wc_empty = WorkCentersEntity()
@@ -221,10 +221,10 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
 
     def test_should_get_one_work_center_data(self):
         expected_data = {
+            "attendance": [],
+            "expeditions": [],
             'id': 1,
             'region': "RJ - Rio de Janeiro",
-            "expeditions": [],
-            "attendance": []
         }
 
         self.simulate_post('/work-centers', json={

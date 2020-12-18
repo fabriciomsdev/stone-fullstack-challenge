@@ -1,18 +1,21 @@
 from data.repositories import WorkCentersRepository
 from data.data_source import DBDataSource
 from domain.entities import WorkCentersEntity
-from domain.business_rules import WorkCenterBusinessValidationsRules
+from domain.business_rules import WorkCenterBusinessRules
 from domain.business_messages import WorkCenterOperationsRejectionMessages, DefaultOperationsRejectionsMessages
 from utils.exceptions import UseCaseException
 
 
 class WorkCentersUseCases():
-    _work_centers_repository = None
-    _business_rules = None
+    _work_centers_repository: WorkCentersRepository = None
+    _business_rules: WorkCenterBusinessRules = None
 
     def __init__(self):
         self._work_centers_repository = WorkCentersRepository(db_data_source = DBDataSource())
-        self._business_rules = WorkCenterBusinessValidationsRules()        
+        self._business_rules = WorkCenterBusinessRules()   
+
+    def get_average_of_attendences_in_wc(self, work_center: WorkCentersEntity = WorkCentersEntity(), days: int = 14) -> int:
+        return self._work_centers_repository.get_average_of_attendence_by_days_period(work_center, 14)
 
     def create(self, work_center: WorkCentersEntity = WorkCentersEntity()) -> WorkCentersEntity:
         if work_center == {}:

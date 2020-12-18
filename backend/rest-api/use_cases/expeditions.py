@@ -1,7 +1,7 @@
 from data.repositories import ExpeditionsRepository
 from data.data_source import DBDataSource
 from domain.entities import ExpeditionsEntity
-from domain.business_rules import WorkCenterBusinessValidationsRules
+from domain.business_rules import WorkCenterBusinessRules
 from domain.business_messages import ExpeditionOperationsRejectionMessages, DefaultOperationsRejectionsMessages
 from utils.exceptions import UseCaseException
 
@@ -12,7 +12,7 @@ class ExpeditionsUseCases():
 
     def __init__(self):
         self._expeditions_repository = ExpeditionsRepository(db_data_source=DBDataSource())
-        self._business_rules = WorkCenterBusinessValidationsRules()
+        self._business_rules = WorkCenterBusinessRules()
 
     def create(self, expedition: ExpeditionsEntity = ExpeditionsEntity()) -> ExpeditionsEntity:
         if expedition.work_center == None:
