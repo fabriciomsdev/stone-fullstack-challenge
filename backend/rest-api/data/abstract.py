@@ -39,7 +39,7 @@ class AbstractRepositoryWithUnitOfWork(Generic[entityType, modelType], Repositor
 
     def update(self, entity: entityType) -> modelType:
         try:
-            dbSession = self._get_transaction_session(expire_on_commit=True)
+            dbSession = self._get_transaction_session()
             table = dbSession.query(self._get_model_class())
 
             model = table.filter_by(id=entity.id).first()
@@ -66,7 +66,7 @@ class AbstractRepositoryWithUnitOfWork(Generic[entityType, modelType], Repositor
     def delete(self, entity: entityType) -> bool:
         try:
             model_class = self._get_model_class()
-            dbSession = self._get_transaction_session(expire_on_commit=True)
+            dbSession = self._get_transaction_session()
             table = dbSession.query(model_class)
             filter_result = table.filter(model_class.id == entity.id)
 
