@@ -1,11 +1,4 @@
-from enum import Enum
-import json
-
-
-class EnumConversibleToJson(str, Enum):
-    def __str__(self):
-        return self.value
-
+from utils.json import EnumConversibleToJson
 
 class DefaultOperationsRejectionsMessages(EnumConversibleToJson):
     NEED_A_ID_TO_FIND: str = "Você precisa definir um ID para selecionar uma entidade válida"
@@ -23,5 +16,5 @@ class ExpeditionOperationsRejectionMessages(EnumConversibleToJson):
 class AttendanceOperationsRejectionMessages(EnumConversibleToJson):
     WORK_CENTER_IS_REQUIRED: str = "Você deve selecionar um polo para pedir um atendimento"
     QTY_OF_TERMINALS_IS_REQUIRED: str = "Você precisa nos informar uma quantidade de terminais que serão usados durante o atendimento"
-    Attendance_DATE_IS_REQUIRED: str = "Você precisa nos informar a data que realizará o atendimento"
-    Attendance_DATE_IS_INVALID: str = "Você precisa nos informar uma data de atendimento valida"
+    ATTENDANCE_DATE_IS_REQUIRED: str = "Você precisa nos informar a data que realizará o atendimento"
+    ATTENDANCE_DATE_IS_INVALID: str = "Você precisa nos informar uma data de atendimento valida"

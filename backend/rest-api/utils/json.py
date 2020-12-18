@@ -3,6 +3,12 @@ import types
 import json
 import datetime
 from utils.parses import parse_datetime_to_date_time_str
+from enum import Enum
+
+
+class EnumConversibleToJson(str, Enum):
+    def __str__(self):
+        return self.value
 
 
 class ComplexObjectToJsonEntityMixin():
@@ -41,6 +47,7 @@ class ComplexObjectToJsonEntityMixin():
         return obj_dict
 
     def _filter_attrs_to_convert_to_dict(self, attrs):
+        attrs = sorted(attrs, key=lambda i: (i))
         return [attr for attr in attrs if attr != '_sa_instance_state']
 
     def _convert_list_to_dict(self, obj_dict, attr, obj_to_convert, type_to_not_convert):
