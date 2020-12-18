@@ -19,7 +19,7 @@ class ExpeditionsUseCases():
             raise UseCaseException(
                 ExpeditionOperationsRejectionMessages.WORK_CENTER_IS_REQUIRED)
 
-        if expedition.qty_of_items == None or expedition.qty_of_items == 0:
+        if expedition.qty_of_terminals == None or expedition.qty_of_terminals == 0:
             raise UseCaseException(
                 ExpeditionOperationsRejectionMessages.QTY_OF_TERMINALS_IS_REQUIRED)
 

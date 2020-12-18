@@ -39,7 +39,7 @@ class ExpeditionDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCrea
         repository = ExpeditionsRepository(self._data_source)
         work_center_model = self._create_a_work_center_by_data_layer()
 
-        entity = ExpeditionsEntity(qty_of_items=100, work_center=work_center_model)
+        entity = ExpeditionsEntity(qty_of_terminals=100, work_center=work_center_model)
 
         repository.persist(entity)
         repository.save_transaction()
@@ -55,9 +55,9 @@ class ExpeditionDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCrea
         repository = ExpeditionsRepository(self._data_source)
         work_center_model = self._create_a_work_center_by_data_layer()
 
-        first_expedition = ExpeditionsEntity(qty_of_items=500, work_center=work_center_model)
-        second_expedition = ExpeditionsEntity(qty_of_items=200, work_center=work_center_model)
-        third_expedition = ExpeditionsEntity(qty_of_items=200, work_center=work_center_model)
+        first_expedition = ExpeditionsEntity(qty_of_terminals=500, work_center=work_center_model)
+        second_expedition = ExpeditionsEntity(qty_of_terminals=200, work_center=work_center_model)
+        third_expedition = ExpeditionsEntity(qty_of_terminals=200, work_center=work_center_model)
 
         first_expedition = repository.persist(first_expedition)
         second_expedition = repository.persist(second_expedition)
@@ -82,14 +82,14 @@ class ExpeditionUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
         work_center = self._create_a_work_center_by_data_layer()
 
         created_entity = ExpeditionsUseCases().create(ExpeditionsEntity(
-            qty_of_items=100,
+            qty_of_terminals=100,
             work_center=work_center
         ))
 
         qty_of_register_in_db_after = len(repository.fetch())
 
         self.assertIsNotNone(created_entity.id)
-        self.assertEqual(created_entity.qty_of_items, 100)
+        self.assertEqual(created_entity.qty_of_terminals, 100)
         self.assertEqual(qty_of_register_in_db_after,
                          qty_of_register_in_db_before + 1)
 
@@ -98,19 +98,19 @@ class ExpeditionUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
         with self.assertRaises(UseCaseException):
             use_case = ExpeditionsUseCases()
             wrong_data = ExpeditionsEntity(
-                qty_of_items=100
+                qty_of_terminals=100
             )
             use_case.create(wrong_data)
 
 
-    def test_can_not_create_a_expedition_without_qty_of_items(self):
+    def test_can_not_create_a_expedition_without_qty_of_terminals(self):
         work_center_model = self._create_a_work_center_by_data_layer()
 
         with self.assertRaises(UseCaseException):
             use_case = ExpeditionsUseCases()
             wrong_data = ExpeditionsEntity(
                 work_center=work_center_model,
-                qty_of_items = None
+                qty_of_terminals = None
             )
             use_case.create(wrong_data)
 
@@ -118,7 +118,7 @@ class ExpeditionUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
             use_case = ExpeditionsUseCases()
             wrong_data = ExpeditionsEntity(
                 work_center=work_center_model,
-                qty_of_items=0
+                qty_of_terminals=0
             )
             use_case.create(wrong_data)
 
@@ -128,7 +128,7 @@ class ExpeditionUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
         use_cases = ExpeditionsUseCases()
 
         expedition = use_cases.create(ExpeditionsEntity(
-            qty_of_items=500,
+            qty_of_terminals=500,
             work_center=work_center
         ))
 
@@ -145,7 +145,7 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
 
     def test_can_not_block_to_send_a_expedition_with_work_center_blank(self):
         wrong_expedition_data = {
-            'qty_of_items': 100
+            'qty_of_terminals': 100
         }
 
         response = self.simulate_post('/expeditions', json=wrong_expedition_data)
@@ -154,7 +154,7 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
 
     def test_can_not_to_send_a_expedition_with_qty_as_zero(self):
         wrong_expedition_data = {
-            'qty_of_items': 0
+            'qty_of_terminals': 0
         }
 
         response = self.simulate_post(
@@ -168,7 +168,7 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         
         expedition_data = {
             'work_center_id': work_center_json['id'],
-            'qty_of_items': 1000
+            'qty_of_terminals': 1000
         }
 
         response = self.simulate_post(
@@ -179,7 +179,7 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
     def test_should_cancel_a_expedition(self):
         expected_expedition_data = {
             "id": 1, 
-            "qty_of_items": 1000, 
+            "qty_of_terminals": 1000, 
             "was_canceled": True,
             "work_center": { 
                 "region": "RJ - Rio de Janeiro",
@@ -192,7 +192,7 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
             "expeditions": [
                 { 
                     "work_center_id": 1,
-                    "qty_of_items": 1000, 
+                    "qty_of_terminals": 1000, 
                     "was_canceled": True,
                     "id": 1,
                 }
@@ -201,11 +201,11 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         work_center_json = self._create_a_work_center_by_application_layer()
         expedition_data = {
             'work_center_id': work_center_json['id'],
-            'qty_of_items': 1000
+            'qty_of_terminals': 1000
         }
         canceled_expedition_data = {
             'work_center_id': work_center_json['id'],
-            'qty_of_items': 1000,
+            'qty_of_terminals': 1000,
             'was_canceled': True,
         }
 

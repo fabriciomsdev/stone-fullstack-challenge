@@ -29,7 +29,7 @@ class ExpeditionsResource(object):
 
             expedition = ExpeditionsEntity()
             expedition.fill(
-                qty_of_items=expedition_data.get('qty_of_items'),
+                qty_of_terminals=expedition_data.get('qty_of_terminals'),
                 work_center=destiny_of_expedition
             )
 
@@ -81,7 +81,7 @@ class ExpeditionResource(object):
 
         try:
             found_entity.fill(
-                qty_of_items=req.media.get('qty_of_items'),
+                qty_of_terminals=req.media.get('qty_of_terminals'),
                 was_canceled=req.media.get('was_canceled')
             )
 

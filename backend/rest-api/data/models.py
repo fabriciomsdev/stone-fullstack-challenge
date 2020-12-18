@@ -28,7 +28,7 @@ class WorkCentersModel(AbstractModel[WorkCentersEntity], BaseModel, WorkCentersE
 
 class ExpeditionsModel(AbstractModel[WorkCentersEntity], BaseModel, ExpeditionsEntity):
     __tablename__ = models_tables['ExpeditionsModel']
-    qty_of_items = Column(Integer)
+    qty_of_terminals = Column(Integer)
     was_canceled = Column(Boolean)
     work_center_id = Column(Integer, ForeignKey('{work_centers_table}.id'.format(
         work_centers_table = models_tables['WorkCentersModel'])))
@@ -37,9 +37,9 @@ class ExpeditionsModel(AbstractModel[WorkCentersEntity], BaseModel, ExpeditionsE
 
     def fill_with_entity(self, entity: ExpeditionsEntity):
         self.id = entity.id
-        self.qty_of_items = entity.qty_of_items
+        self.qty_of_terminals = entity.qty_of_terminals
         self.was_canceled = entity.was_canceled
         self.work_center_id = entity.work_center.id
 
     def to_entity(self) -> ExpeditionsEntity:
-        return ExpeditionsEntity(self.id, self.qty_of_items, self.was_canceled, self.work_center)
+        return ExpeditionsEntity(self.id, self.qty_of_terminals, self.was_canceled, self.work_center)
