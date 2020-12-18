@@ -8,29 +8,8 @@ from utils.exceptions import UseCaseException
 from domain.business_messages import ExpeditionOperationsRejectionMessages
 from tests.utils.application_layer import ResourcesTestCase, ResetAllApplicationEachTestCase
 from tests.utils.datasource_layer import ResetDatabaseEachTestCase
+from tests.mixins import TestWithWorkCenterCreationMixin
 import json
-
-class TestWithWorkCenterCreationMixin():
-    _data_source = None
-
-    def _create_a_work_center_by_data_layer(self):
-        work_center_repository = WorkCentersRepository(self._data_source)
-        work_center = WorkCentersEntity(region = "SP - Osasco")
-
-        work_center_model = work_center_repository.persist(work_center)
-        work_center_repository.save_transaction()
-
-        return work_center_model
-
-    def _create_a_work_center_by_application_layer(self):
-        new_work_center_data = {
-            'region': "RJ - Rio de Janeiro"
-        }
-
-        response = self.simulate_post(
-            '/work-centers', json=new_work_center_data)
-
-        return json.loads(response.content)
 
 
 class ExpeditionDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreationMixin):
@@ -182,8 +161,8 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
             "qty_of_terminals": 1000, 
             "was_canceled": True,
             "work_center": { 
-                "region": "RJ - Rio de Janeiro",
                 "id": 1,
+                "region": "RJ - Rio de Janeiro",
             }
         }
         expected_work_center_data = {
@@ -191,12 +170,12 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
             "region": "RJ - Rio de Janeiro", 
             "expeditions": [
                 { 
-                    "work_center_id": 1,
+                    "id": 1,
                     "qty_of_terminals": 1000, 
                     "was_canceled": True,
-                    "id": 1,
                 }
-            ]
+            ],
+            "attendance": []
         }
         work_center_json = self._create_a_work_center_by_application_layer()
         expedition_data = {
@@ -227,5 +206,7 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         work_center_content_updated = json.loads(response_get_work_center_updated.content)
 
         self.assertEqual(response_update.status, falcon.HTTP_200)
-        self.assertEqual(expedition_content_updated, json.dumps(expected_expedition_data))
-        self.assertEqual(work_center_content_updated, json.dumps(expected_work_center_data))
+        self.assertEqual(expedition_content_updated,
+                         json.dumps(expected_expedition_data))
+        self.assertEqual(work_center_content_updated,
+                               json.dumps(expected_work_center_data))

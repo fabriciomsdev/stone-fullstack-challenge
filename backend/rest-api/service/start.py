@@ -1,6 +1,7 @@
 import falcon
 from service.resources.work_centers import WorkCentersResource, WorkCenterResource
 from service.resources.expeditions import ExpeditionResource, ExpeditionsResource
+from service.resources.attendance import AttendanceListResource, AttendanceResource
 from data.data_source import DBDataSource
 from falcon import media
 import rapidjson
@@ -39,6 +40,11 @@ class ApplicationBuilder():
             "/expeditions", ExpeditionsResource())
         self.application_layer.add_route(
             "/expeditions/{primary_key}", ExpeditionResource())
+
+        self.application_layer.add_route(
+            "/attendance", AttendanceListResource())
+        self.application_layer.add_route(
+            "/attendance/{primary_key}", AttendanceResource())
 
         return self
 

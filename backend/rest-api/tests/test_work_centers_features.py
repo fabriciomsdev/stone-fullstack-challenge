@@ -190,12 +190,14 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
             {
                 "id": 1,
                 "region": "RJ - Rio de Janeiro",
-                "expeditions": []
+                "expeditions": [],
+                "attendance": []
             },
             {
                 "id": 2,
                 "region": "SP - São Paulo",
-                "expeditions": []
+                "expeditions": [],
+                "attendance": []
             }
         ]
 
@@ -221,7 +223,8 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
         expected_data = {
             'id': 1,
             'region': "RJ - Rio de Janeiro",
-            "expeditions": []
+            "expeditions": [],
+            "attendance": []
         }
 
         self.simulate_post('/work-centers', json={

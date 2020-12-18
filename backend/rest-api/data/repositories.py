@@ -1,5 +1,5 @@
-from domain.entities import WorkCentersEntity, ExpeditionsEntity
-from data.models import AbstractModel, WorkCentersModel, ExpeditionsModel
+from domain.entities import WorkCentersEntity, ExpeditionsEntity, AttendanceEntity
+from data.models import AbstractModel, WorkCentersModel, ExpeditionsModel, AttendanceModel
 from data.data_source import DBDataSource
 from sqlalchemy.sql.schema import Column
 from utils.logger import Logger
@@ -13,6 +13,11 @@ class WorkCentersRepository(AbstractRepositoryWithUnitOfWork[WorkCentersEntity, 
 class ExpeditionsRepository(AbstractRepositoryWithUnitOfWork[ExpeditionsEntity, ExpeditionsModel]):
     def _get_model_class(self) -> ExpeditionsModel:
         return ExpeditionsModel
+
+
+class AttendanceRepository(AbstractRepositoryWithUnitOfWork[AttendanceEntity, AttendanceModel]):
+    def _get_model_class(self) -> AttendanceModel:
+        return AttendanceModel
 
 
 
