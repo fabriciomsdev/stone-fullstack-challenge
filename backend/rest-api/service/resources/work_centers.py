@@ -35,7 +35,7 @@ class WorkCenterResource(object):
         if found_entity == None:
             raise falcon.HTTPNotFound()
 
-        resp.media = serialize(found_entity)
+        resp.media = serialize(found_entity.to_dict())
         resp.content_type = falcon.MEDIA_JSON
         resp.status = falcon.HTTP_OK
 
@@ -59,7 +59,8 @@ class WorkCenterResource(object):
         found_entity.fill(**req.media)
 
         try:
-            resp.body = serialize(WorkCentersUseCases().update(found_entity))
+            entity_updated = WorkCentersUseCases().update(found_entity)
+            resp.body = serialize(entity_updated.to_dict())
             resp.status = falcon.HTTP_OK
         except Exception as ex:
             raise falcon.HTTPError(falcon.HTTP_500, str(ex))

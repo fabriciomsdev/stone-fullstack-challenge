@@ -199,7 +199,13 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         response_get = self.simulate_get('/expeditions/1', headers={
             'content-type': 'application/json'
         })
+
+        response_get_2 = self.simulate_get('/work-centers/1', headers={
+            'content-type': 'application/json'
+        })
         
+        print(response_get_2.content)
+
         content_updated = json.loads(response_get.content)
         
         self.assertEqual(response_update.status, falcon.HTTP_200)
