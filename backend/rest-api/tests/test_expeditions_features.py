@@ -177,8 +177,27 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         self.assertEqual(response.status, falcon.HTTP_CREATED)
 
     def test_should_cancel_a_expedition(self):
-        expected_data = {"id": 1, "qty_of_items": 1000, "was_canceled": True,
-                         "work_center": {"region": "RJ - Rio de Janeiro", "id": 1}}
+        expected_expedition_data = {
+            "id": 1, 
+            "qty_of_items": 1000, 
+            "was_canceled": True,
+            "work_center": { 
+                "region": "RJ - Rio de Janeiro",
+                "id": 1,
+            }
+        }
+        expected_work_center_data = {
+            "id": 1, 
+            "region": "RJ - Rio de Janeiro", 
+            "expeditions": [
+                { 
+                    "work_center_id": 1,
+                    "qty_of_items": 1000, 
+                    "was_canceled": True,
+                    "id": 1,
+                }
+            ]
+        }
         work_center_json = self._create_a_work_center_by_application_layer()
         expedition_data = {
             'work_center_id': work_center_json['id'],
@@ -196,17 +215,17 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         response_update = self.simulate_put(
             '/expeditions/1', json=canceled_expedition_data)
 
-        response_get = self.simulate_get('/expeditions/1', headers={
+        response_get_expedition = self.simulate_get('/expeditions/1', headers={
             'content-type': 'application/json'
         })
 
-        response_get_2 = self.simulate_get('/work-centers/1', headers={
+        response_get_work_center_updated = self.simulate_get('/work-centers/1', headers={
             'content-type': 'application/json'
         })
-        
-        print(response_get_2.content)
 
-        content_updated = json.loads(response_get.content)
-        
+        expedition_content_updated = json.loads(response_get_expedition.content)
+        work_center_content_updated = json.loads(response_get_work_center_updated.content)
+
         self.assertEqual(response_update.status, falcon.HTTP_200)
-        self.assertEqual(content_updated, json.dumps(expected_data))
+        self.assertEqual(expedition_content_updated, json.dumps(expected_expedition_data))
+        self.assertEqual(work_center_content_updated, json.dumps(expected_work_center_data))
