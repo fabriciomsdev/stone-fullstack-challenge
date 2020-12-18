@@ -1,6 +1,6 @@
 from threading import Lock, Thread
 
-class Singleton(type):
+class SingletonMultiThread(type):
     """
     Abstraction of Singleton Thread safe 
     """
@@ -15,6 +15,19 @@ class Singleton(type):
                 new_instance = super().__call__(*args, **kwargs)
                 cls._instance_list[cls] = new_instance
 
+        return cls._instance_list[cls]
+
+
+class Singleton(type):
+    """
+    Abstraction of Singleton
+    """
+    _instance_list = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instance_list:
+            instance = super().__call__(*args, **kwargs)
+            cls._instance_list[cls] = instance
         return cls._instance_list[cls]
 
 
