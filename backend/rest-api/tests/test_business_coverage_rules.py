@@ -60,8 +60,8 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
 
         work_center_updated = use_cases.find(work_center.id)
 
-        terminals_used = work_center_updated.get_qty_of_terminals_used()
-        terminals_received = work_center_updated.get_qty_of_terminals_received()
+        terminals_used = work_center_updated.calcule_qty_of_terminals_used()
+        terminals_received = work_center_updated.calcule_qty_of_terminals_received()
         terminails_available = business_rules.get_qty_of_terminals_available(
             work_center_updated)
         avg_attendance = use_cases.get_average_of_attendences_in_wc(
@@ -86,8 +86,8 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
 
         work_center_updated = use_cases.find(work_center.id)
 
-        terminals_used = work_center_updated.get_qty_of_terminals_used()
-        terminals_received = work_center_updated.get_qty_of_terminals_received()
+        terminals_used = work_center_updated.calcule_qty_of_terminals_used()
+        terminals_received = work_center_updated.calcule_qty_of_terminals_received()
         terminails_available = business_rules.get_qty_of_terminals_available(
             work_center_updated)
         avg_attendance = use_cases.get_average_of_attendences_in_wc(
@@ -116,8 +116,8 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
         
         work_center_updated = use_cases.find(work_center.id)
 
-        terminals_used = work_center_updated.get_qty_of_terminals_used()
-        terminals_received = work_center_updated.get_qty_of_terminals_received()
+        terminals_used = work_center_updated.calcule_qty_of_terminals_used()
+        terminals_received = work_center_updated.calcule_qty_of_terminals_received()
         terminails_available = business_rules.get_qty_of_terminals_available(
             work_center_updated)
         avg_attendance = use_cases.get_average_of_attendences_in_wc(
@@ -145,8 +145,8 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
 
         work_center_updated = use_cases.find(work_center.id)
 
-        terminals_used = work_center_updated.get_qty_of_terminals_used()
-        terminals_received = work_center_updated.get_qty_of_terminals_received()
+        terminals_used = work_center_updated.calcule_qty_of_terminals_used()
+        terminals_received = work_center_updated.calcule_qty_of_terminals_received()
         terminails_available = business_rules.get_qty_of_terminals_available(
             work_center_updated)
 
@@ -176,8 +176,8 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
 
         work_center_updated = use_cases.find(work_center.id)
 
-        terminals_used = work_center_updated.get_qty_of_terminals_used()
-        terminals_received = work_center_updated.get_qty_of_terminals_received()
+        terminals_used = work_center_updated.calcule_qty_of_terminals_used()
+        terminals_received = work_center_updated.calcule_qty_of_terminals_received()
         terminails_available = business_rules.get_qty_of_terminals_available(
             work_center_updated)
 

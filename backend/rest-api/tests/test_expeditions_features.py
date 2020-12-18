@@ -10,6 +10,7 @@ from tests.utils.application_layer import ResourcesTestCase, ResetAllApplication
 from tests.utils.datasource_layer import ResetDatabaseEachTestCase
 from tests.mixins import TestWithWorkCenterCreationMixin
 import json
+from domain.coverage_classification import CoverageClassifications
 
 
 class ExpeditionDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreationMixin):
@@ -24,7 +25,7 @@ class ExpeditionDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCrea
         repository.save_transaction()
 
         db_entities = repository.fetch()
-        qty_of_terminals_in_wc = work_center_model.to_entity().get_qty_of_terminals_received()
+        qty_of_terminals_in_wc = work_center_model.to_entity().calcule_qty_of_terminals_received()
 
         self.assertEqual(len(db_entities), 1)
         self.assertEqual(qty_of_terminals_in_wc, 100)
@@ -47,7 +48,7 @@ class ExpeditionDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCrea
         repository.update(third_expedition.to_entity())
         repository.save_transaction()
 
-        qty_in_wc_after_cancel_one = work_center_model.get_qty_of_terminals_received()
+        qty_in_wc_after_cancel_one = work_center_model.calcule_qty_of_terminals_received()
 
         self.assertEqual(qty_in_wc_after_cancel_one, 700)
         self.assertTrue(third_expedition.was_canceled)
@@ -167,6 +168,9 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         }
         expected_work_center_data = {
             "attendance": [],
+            "avg_of_attendence": 0,
+            "coverage_based_on_days_qty": 14,
+            "coverage_classification": json.dumps(CoverageClassifications.RED),
             "expeditions": [
                 {
                     "id": 1,
@@ -175,6 +179,9 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
                 }
             ],
             "id": 1, 
+            "qty_of_terminals_available": 0,
+            "qty_of_terminals_received": 0,
+            "qty_of_terminals_used": 0,
             "region": "RJ - Rio de Janeiro"
         }
         work_center_json = self._create_a_work_center_by_application_layer()

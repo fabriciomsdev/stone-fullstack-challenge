@@ -6,6 +6,13 @@ class WorkCentersEntity(ComplexObjectToJsonEntityMixin):
     region: str = ''
     expeditions: list = []
     attendance: list = []
+    coverage_classification: str = None
+    days_of_coverage: int = 0
+    avg_of_attendence: int = 0
+    coverage_based_on_days_qty: int = 14
+    qty_of_terminals_available: int = 0
+    qty_of_terminals_used: int = 0
+    qty_of_terminals_received: int = 0
 
     def __init__(self, region: str = None, id: int = None, expeditions: list = [], attendance: list = []):
         self.id = id
@@ -16,19 +23,32 @@ class WorkCentersEntity(ComplexObjectToJsonEntityMixin):
         self.expeditions = expeditions
         self.attendance = attendance
 
-    def get_qty_of_terminals_received(self):
+    def calcule_qty_of_terminals_received(self) -> int:
         terminals_delivered_list = [ 
             exp.qty_of_terminals for exp in self.expeditions if exp.was_canceled == False
         ]
+        self.qty_of_terminals_received = sum(terminals_delivered_list)
 
-        return sum(terminals_delivered_list)
+        return self.qty_of_terminals_received
 
-    def get_qty_of_terminals_used(self):
+    def calcule_qty_of_terminals_used(self) -> int:
         terminals_delivered_list = [
             attdc.qty_of_terminals for attdc in self.attendance if attdc.was_canceled == False
         ]
-        
-        return sum(terminals_delivered_list)
+        self.qty_of_terminals_used = sum(terminals_delivered_list)
+
+        return self.qty_of_terminals_used
+
+    def calcule_qty_of_terminals_available(self) -> int:
+        if self.qty_of_terminals_used == 0:
+            self.calcule_qty_of_terminals_used()
+
+        if self.qty_of_terminals_received == 0:
+            self.calcule_qty_of_terminals_received()
+
+        self.qty_of_terminals_available = self.qty_of_terminals_received - self.qty_of_terminals_used
+
+        return self.qty_of_terminals_available
 
 
 class ExpeditionsEntity(ComplexObjectToJsonEntityMixin):

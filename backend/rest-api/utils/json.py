@@ -8,7 +8,7 @@ from enum import Enum
 
 class EnumConversibleToJson(str, Enum):
     def __str__(self):
-        return self.value
+        return str(self.value)
 
 
 class ComplexObjectToJsonEntityMixin():
@@ -33,6 +33,9 @@ class ComplexObjectToJsonEntityMixin():
             if isinstance(obj_to_convert, list):
                 obj_dict[attr] = self._convert_list_to_dict(
                     obj_dict, attr, obj_to_convert, type_of_object_converted)
+
+            elif isinstance(obj_to_convert, Enum):
+                obj_dict[attr] = str(obj_to_convert)
 
             elif isinstance(obj_to_convert, datetime.datetime):
                 obj_dict[attr] = parse_datetime_to_date_time_str(obj_to_convert)

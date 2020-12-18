@@ -11,6 +11,7 @@ from use_cases.work_centers import WorkCentersUseCases
 from domain.entities import WorkCentersEntity
 from data.repositories import WorkCentersRepository
 from domain.business_rules import WorkCenterBusinessRules
+from domain.coverage_classification import CoverageClassifications
 
 
 # Data Manipulation Tests
@@ -191,13 +192,25 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
                 "id": 1,
                 "region": "RJ - Rio de Janeiro",
                 "expeditions": [],
-                "attendance": []
+                "attendance": [],
+                "coverage_based_on_days_qty": 14,
+                "qty_of_terminals_used": 0,
+                "qty_of_terminals_received": 0,
+                "qty_of_terminals_available": 0,
+                "avg_of_attendence": 0,
+                "coverage_classification": CoverageClassifications.RED
             },
             {
                 "id": 2,
-                "region": "SP - São Paulo",
+                "region": "SP - Osasco",
                 "expeditions": [],
-                "attendance": []
+                "attendance": [],
+                "coverage_based_on_days_qty": 14,
+                "qty_of_terminals_used": 0,
+                "qty_of_terminals_received": 0,
+                "qty_of_terminals_available": 0,
+                "avg_of_attendence": 0,
+                "coverage_classification": CoverageClassifications.RED
             }
         ]
 
@@ -206,7 +219,7 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
         })
 
         self.simulate_post('/work-centers', json={
-            'region': "SP - São Paulo"
+            'region': "SP - Osasco"
         })
         
         response = self.simulate_get('/work-centers', headers = {
@@ -216,15 +229,21 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
         response_data = [json.loads(item) for item in json.loads(response.content)]
 
         self.assertEqual(response.status, falcon.HTTP_OK)
-        self.assertEqual(response_data, expected_data)
+        self.assertListEqual(response_data, expected_data)
 
 
     def test_should_get_one_work_center_data(self):
         expected_data = {
+            "id": 1,
+            "region": "RJ - Rio de Janeiro",
             "attendance": [],
             "expeditions": [],
-            'id': 1,
-            'region': "RJ - Rio de Janeiro",
+            "coverage_based_on_days_qty": 14,
+            "qty_of_terminals_used": 0,
+            "qty_of_terminals_received": 0,
+            "qty_of_terminals_available": 0,
+            "avg_of_attendence": 0,
+            "coverage_classification": CoverageClassifications.RED
         }
 
         self.simulate_post('/work-centers', json={
@@ -233,10 +252,10 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
 
         response = self.simulate_get('/work-centers/1')
         
-        received_data = json.loads(response.content)
+        received_data = json.loads(json.loads(response.content))
 
         self.assertEqual(response.status, falcon.HTTP_200)
-        self.assertEqual(received_data, json.dumps(expected_data))
+        self.assertEqual(received_data, expected_data)
         
 
     def test_should_not_get_one_work_center_data_and_return_404(self):

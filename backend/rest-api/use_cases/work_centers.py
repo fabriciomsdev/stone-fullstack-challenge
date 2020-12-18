@@ -1,5 +1,6 @@
 from data.repositories import WorkCentersRepository
 from data.data_source import DBDataSource
+from data.models import WorkCentersModel
 from domain.entities import WorkCentersEntity
 from domain.business_rules import WorkCenterBusinessRules
 from domain.business_messages import WorkCenterOperationsRejectionMessages, DefaultOperationsRejectionsMessages
@@ -35,15 +36,30 @@ class WorkCentersUseCases():
 
         return model_created.to_entity()
 
+    def _prepare_entity(self, entity: WorkCentersEntity) -> WorkCentersEntity:
+        if entity is not None:
+            entity.coverage_based_on_days_qty = 14
+            entity.calcule_qty_of_terminals_used()
+            entity.calcule_qty_of_terminals_received()
+            entity.calcule_qty_of_terminals_available()
+            entity.avg_of_attendence = self.get_average_of_attendences_in_wc(
+                entity, entity.coverage_based_on_days_qty)
+            
+            entity.coverage_classification = self._business_rules.get_coverage_classification(
+                entity.qty_of_terminals_available, entity.avg_of_attendence, entity.coverage_based_on_days_qty)
+
+        return entity
+
+
     def get_all(self) -> list:
-        return [ model.to_entity() for model in self._work_centers_repository.fetch() ]
+        return [self._prepare_entity(model.to_entity()) for model in self._work_centers_repository.fetch()]
 
     def find(self, primary_key: int) -> WorkCentersEntity:
         if primary_key == None or primary_key == 0:
             raise UseCaseException(
                 DefaultOperationsRejectionsMessages.NEED_A_ID_TO_FIND)
 
-        return self._work_centers_repository.find(primary_key)
+        return self._prepare_entity(self._work_centers_repository.find(primary_key))
 
     def delete(self, entity: WorkCentersEntity) -> bool:
         try:
