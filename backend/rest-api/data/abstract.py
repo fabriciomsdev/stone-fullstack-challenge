@@ -73,8 +73,7 @@ class AbstractRepositoryWithUnitOfWork(Generic[entityType, modelType], Repositor
             if filter_result != None:
                 filter_result.delete()
             else:
-                raise DataLayerException(
-                    "Model to delete was not found on data Source")
+                raise DataLayerException("Model to delete was not found on data Source")
 
             return True
         except Exception as ex:

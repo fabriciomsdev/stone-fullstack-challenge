@@ -2,7 +2,7 @@ from data.repositories import WorkCentersRepository
 from data.data_source import DBDataSource
 from domain.entities import WorkCentersEntity
 from domain.business_rules import WorkCenterBusinessValidationsRules
-from domain.business_messages import WorkCenterOperationsRejectionMessages
+from domain.business_messages import WorkCenterOperationsRejectionMessages, DefaultOperationsRejectionsMessages
 from utils.exceptions import UseCaseException
 
 
@@ -37,7 +37,8 @@ class WorkCentersUseCases():
 
     def find(self, primary_key: int) -> WorkCentersEntity:
         if primary_key == None or primary_key == 0:
-            raise UseCaseException(WorkCenterOperationsRejectionMessages.NEED_A_ID_TO_FIND)
+            raise UseCaseException(
+                DefaultOperationsRejectionsMessages.NEED_A_ID_TO_FIND)
 
         return self._work_centers_repository.find(primary_key)
 

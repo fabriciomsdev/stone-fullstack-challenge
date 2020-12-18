@@ -42,8 +42,6 @@ class WorkCenterDataAccessTest(ResetDatabaseEachTestCase):
 
         entities_on_db = repository.fetch()
 
-        for entity in entities_on_db: print(entity.__dict__)
-
         self.assertEqual(len(entities_on_db), 3)
 
     def test_should_get_one_work_center_in_db(self):
@@ -188,14 +186,18 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
 
     
     def test_should_get_all_work_centers_data(self):
-        expected_data = [{
-            "id": 1,
-            "region": "RJ - Rio de Janeiro"
-        },
+        expected_data = [
             {
-            "id": 2,
-            "region": "SP - São Paulo"
-        }]
+                "id": 1,
+                "region": "RJ - Rio de Janeiro",
+                "expeditions": []
+            },
+            {
+                "id": 2,
+                "region": "SP - São Paulo",
+                "expeditions": []
+            }
+        ]
 
         self.simulate_post('/work-centers', json={
             'region': "RJ - Rio de Janeiro"
@@ -218,7 +220,8 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
     def test_should_get_one_work_center_data(self):
         expected_data = {
             'id': 1,
-            'region': "RJ - Rio de Janeiro"
+            'region': "RJ - Rio de Janeiro",
+            "expeditions": []
         }
 
         self.simulate_post('/work-centers', json={

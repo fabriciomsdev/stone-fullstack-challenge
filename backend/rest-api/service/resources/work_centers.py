@@ -15,7 +15,7 @@ class WorkCentersResource(object):
         try:
             result = WorkCentersUseCases().create(WorkCentersEntity(**req.media))
         except Exception as ex:
-            raise falcon.HTTPError("Error", str(ex))
+            raise falcon.HTTPError(falcon.HTTP_500, str(ex))
 
         resp.status = falcon.HTTP_CREATED
         resp.body = serialize(result)
@@ -49,7 +49,7 @@ class WorkCenterResource(object):
             resp.body = json.dumps(WorkCentersUseCases().delete(found_entity))
             resp.status = falcon.HTTP_OK
         except Exception as ex:
-            raise falcon.HTTPError("Error", str(ex))
+            raise falcon.HTTPError(falcon.HTTP_500, str(ex))
 
     def on_put(self, req: Request, resp: Response, primary_key: int):
         found_entity = WorkCentersUseCases().find(primary_key=primary_key)
@@ -62,7 +62,7 @@ class WorkCenterResource(object):
             resp.body = serialize(WorkCentersUseCases().update(found_entity))
             resp.status = falcon.HTTP_OK
         except Exception as ex:
-            raise falcon.HTTPError("Error", str(ex))
+            raise falcon.HTTPError(falcon.HTTP_500, str(ex))
         
         
         

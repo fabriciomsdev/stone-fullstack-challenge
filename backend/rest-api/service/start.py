@@ -1,6 +1,6 @@
 import falcon
 from service.resources.work_centers import WorkCentersResource, WorkCenterResource
-from domain.business_rules import WorkCenterBusinessValidationsRules
+from service.resources.expeditions import ExpeditionResource, ExpeditionsResource
 from data.data_source import DBDataSource
 from falcon import media
 import rapidjson
@@ -30,8 +30,15 @@ class ApplicationBuilder():
         return self
 
     def define_comunication_ways(self):
-        self.application_layer.add_route("/work-centers", WorkCentersResource())
-        self.application_layer.add_route("/work-centers/{primary_key}", WorkCenterResource())
+        self.application_layer.add_route(
+            "/work-centers", WorkCentersResource())
+        self.application_layer.add_route(
+            "/work-centers/{primary_key}", WorkCenterResource())
+
+        self.application_layer.add_route(
+            "/expeditions", ExpeditionsResource())
+        self.application_layer.add_route(
+            "/expeditions/{primary_key}", ExpeditionResource())
 
         return self
 
