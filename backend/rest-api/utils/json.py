@@ -1,15 +1,12 @@
 import inspect
 import types
 import json
+import datetime
+from utils.parses import parse_datetime_to_date_time_str
 
-
-def my_decorator(func):
-    def wrapper():
-        func()
-    return wrapper
 
 class ComplexObjectToJsonEntityMixin():
-    def is_instance(self, obj):
+    def _is_instance_of_a_class(self, obj):
         if not hasattr(obj, '__dict__'):
             return False
         if inspect.isroutine(obj):
@@ -23,7 +20,7 @@ class ComplexObjectToJsonEntityMixin():
         attrs = self.__dict__.keys()
         attrs_filtered = self._filter_attrs_to_convert_to_dict(attrs)
         type_of_object_converted = self.__class__
-
+        
         for attr in attrs_filtered:
             obj_to_convert = class_dictionary.get(attr)
 
@@ -31,6 +28,9 @@ class ComplexObjectToJsonEntityMixin():
                 obj_dict[attr] = self._convert_list_to_dict(
                     obj_dict, attr, obj_to_convert, type_of_object_converted)
 
+            elif isinstance(obj_to_convert, datetime.datetime):
+                obj_dict[attr] = parse_datetime_to_date_time_str(obj_to_convert)
+            
             elif ignore_type is not None:
                 if not isinstance(obj_to_convert, ignore_type):
                     obj_dict[attr] = self._convert_to_dict(obj_to_convert, obj_dict, attr, ignore_type)
@@ -57,8 +57,8 @@ class ComplexObjectToJsonEntityMixin():
         if isinstance(obj_to_convert, ComplexObjectToJsonEntityMixin):
             return obj_to_convert.to_dict(ignore_type)
 
-        elif self.is_instance(obj_to_convert):
+        elif self._is_instance_of_a_class(obj_to_convert):
             return obj_to_convert.__dict__
-            
+
         else:
             return obj_to_convert
