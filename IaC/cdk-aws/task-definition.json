@@ -20,7 +20,7 @@
                 "options": {
                     "awslogs-group": "awslogs-stone",
                     "awslogs-region": "us-west-2",
-                    "awslogs-stream-prefix": "awslogs-example"
+                    "awslogs-stream-prefix": "awslogs-stream-stone"
                 }
             }
         }
