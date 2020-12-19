@@ -7,26 +7,30 @@ class CdkAwsStack(core.Stack):
     def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        # Create the ECR Repository
+        # Criando container registry
         ecr_repository = ecr.Repository(self,
                                         "ecs-devops-stone-repository",
                                         repository_name="ecs-devops-stone-repository")
 
-        # Create the ECS Cluster (and VPC)
+        # Criando VPC
         vpc = ec2.Vpc(self,
                       "ecs-devops-stone-vpc",
                       max_azs=3)
+
+        # Criando Cluster
         cluster = ecs.Cluster(self,
                               "ecs-devops-stone-cluster",
                               cluster_name="ecs-devops-stone-cluster",
                               vpc=vpc)
 
-        # Create the ECS Task Definition with placeholder container (and named Task Execution IAM Role)
+        # Criando categoria execução
         execution_role = iam.Role(self,
                                   "ecs-devops-stone-execution-role",
                                   assumed_by=iam.ServicePrincipal(
                                       "ecs-tasks.amazonaws.com"),
                                   role_name="ecs-devops-stone-execution-role")
+
+        # Adicionando permisões a categoria
         execution_role.add_to_policy(iam.PolicyStatement(
             effect=iam.Effect.ALLOW,
             resources=["*"],
@@ -36,9 +40,11 @@ class CdkAwsStack(core.Stack):
                 "ecr:GetDownloadUrlForLayer",
                 "ecr:BatchGetImage",
                 "logs:CreateLogStream",
-                "logs:PutLogEvents"
+                "logs:PutLogEvents",
+                "logs:CreateLogGroup",
             ]
         ))
+        
         task_definition = ecs.FargateTaskDefinition(self,
                                                     "ecs-devops-stone-task-definition",
                                                     execution_role=execution_role,
