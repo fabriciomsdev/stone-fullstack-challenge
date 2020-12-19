@@ -1,4 +1,11 @@
-from aws_cdk import (core, aws_ecs as ecs, aws_ecr as ecr, aws_ec2 as ec2, aws_iam as iam)
+from aws_cdk import (
+    core, 
+    aws_logs as logs,
+    aws_ecs as ecs,
+    aws_ecr as ecr, 
+    aws_ec2 as ec2, 
+    aws_iam as iam, 
+)
 from aws_cdk import core
 
 
@@ -60,4 +67,8 @@ class CdkAwsStack(core.Stack):
                                      cluster=cluster,
                                      task_definition=task_definition,
                                      service_name="ecs-devops-stone-service")
+
+        log_group = logs.LogGroup(self, "awslogs-stone")
+        log_stream = logs.LogStream(
+            self, "awslogs-stream-stone", log_group=log_group)
 
