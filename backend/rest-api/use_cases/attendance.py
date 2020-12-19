@@ -8,10 +8,10 @@ from utils.exceptions import UseCaseException
 
 class AttendanceUseCases():
     _attendance_repository = None
+    _data_source = DBDataSource()
 
     def __init__(self):
-        self._attendance_repository = AttendanceRepository(
-            db_data_source=DBDataSource())
+        self._attendance_repository = AttendanceRepository(db_data_source = self._data_source)
 
     def create(self, attendance: AttendanceEntity = AttendanceEntity()) -> AttendanceEntity:
         if attendance.work_center == None:

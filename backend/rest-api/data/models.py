@@ -15,20 +15,27 @@ models_tables = {
 class WorkCentersModel(AbstractModel[WorkCentersEntity], BaseModel, WorkCentersEntity):
     __tablename__ = models_tables['WorkCentersModel']
     region = Column(String)
+    days_qty_ideal_for_coverage = Column(Integer)
     expeditions = relationship(
-        "ExpeditionsModel", back_populates="work_center", post_update=True)
+        "ExpeditionsModel", 
+        back_populates="work_center", 
+        post_update=True, 
+        cascade="all")
     attendance = relationship(
-        "AttendanceModel", back_populates="work_center", post_update=True)
+        "AttendanceModel", 
+        back_populates="work_center", 
+        post_update=True)
 
     def fill_with_entity(self, entity: WorkCentersEntity = None):
         self.id = entity.id
         self.region = entity.region
+        self.days_qty_ideal_for_coverage = entity.days_qty_ideal_for_coverage
 
     def to_entity(self) -> WorkCentersEntity:
         expeditions = [ exp.to_entity() for exp in self.expeditions ]
         attendance = [ attdc.to_entity() for attdc in self.attendance ]
         
-        return WorkCentersEntity(self.region, self.id, expeditions, attendance)
+        return WorkCentersEntity(self.region, self.id, expeditions, attendance, self.days_qty_ideal_for_coverage)
 
 
 class ExpeditionsModel(AbstractModel[WorkCentersEntity], BaseModel, ExpeditionsEntity):
@@ -38,16 +45,26 @@ class ExpeditionsModel(AbstractModel[WorkCentersEntity], BaseModel, ExpeditionsE
     work_center_id = Column(Integer, ForeignKey('{work_centers_table}.id'.format(
         work_centers_table = models_tables['WorkCentersModel'])))
     work_center = relationship(
-        "WorkCentersModel", back_populates="expeditions", post_update=True)
-
+        "WorkCentersModel", 
+        back_populates="expeditions", 
+        post_update=True)
+    auto_predict_qty_needed = Column(Boolean)
+    
+    
     def fill_with_entity(self, entity: ExpeditionsEntity):
         self.id = entity.id
         self.qty_of_terminals = entity.qty_of_terminals
         self.was_canceled = entity.was_canceled
         self.work_center_id = entity.work_center.id
+        self.auto_predict_qty_needed = ExpeditionsEntity.auto_predict_qty_needed
 
     def to_entity(self) -> ExpeditionsEntity:
-        return ExpeditionsEntity(self.id, self.qty_of_terminals, self.was_canceled, self.work_center)
+        return ExpeditionsEntity(
+            self.id, 
+            self.qty_of_terminals, 
+            self.was_canceled, 
+            self.work_center, 
+            self.auto_predict_qty_needed)
 
 
 class AttendanceModel(AbstractModel[WorkCentersEntity], BaseModel, AttendanceEntity):
@@ -57,7 +74,9 @@ class AttendanceModel(AbstractModel[WorkCentersEntity], BaseModel, AttendanceEnt
     work_center_id = Column(Integer, ForeignKey('{work_centers_table}.id'.format(
         work_centers_table=models_tables['WorkCentersModel'])))
     work_center = relationship(
-        "WorkCentersModel", back_populates="attendance", post_update=True)
+        "WorkCentersModel", 
+        back_populates="attendance", 
+        post_update=True)
     attendance_date = Column(DateTime)
 
     def fill_with_entity(self, entity: AttendanceEntity):

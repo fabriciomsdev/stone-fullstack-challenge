@@ -37,22 +37,17 @@ class AttendanceDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCrea
         work_center_model = self._create_a_work_center_by_data_layer()
 
         first_attendance = AttendanceEntity(qty_of_terminals=1, work_center=work_center_model)
-        second_attendance = AttendanceEntity(qty_of_terminals=1, work_center=work_center_model)
-        third_attendance = AttendanceEntity(qty_of_terminals=1, work_center=work_center_model)
+        second_attendance = AttendanceEntity(
+            qty_of_terminals=1, work_center=work_center_model, was_canceled=True)
 
         first_attendance = repository.persist(first_attendance)
         second_attendance = repository.persist(second_attendance)
-        third_attendance = repository.persist(third_attendance)
-        repository.save_transaction()
-
-        third_attendance.was_canceled = True
-        repository.update(third_attendance.to_entity())
         repository.save_transaction()
 
         qty_used_after_cancel_one = work_center_model.calcule_qty_of_terminals_used()
 
-        self.assertEqual(qty_used_after_cancel_one, 2)
-        self.assertTrue(third_attendance.was_canceled)
+        self.assertEqual(qty_used_after_cancel_one, 1)
+        self.assertTrue(second_attendance.was_canceled)
 
 
 class AttendanceUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreationMixin):

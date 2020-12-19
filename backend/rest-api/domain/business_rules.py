@@ -36,5 +36,9 @@ class WorkCenterBusinessRules(metaclass=Singleton):
             return CoverageClassifications.GREEN
         
         return CoverageClassifications.RED
+
+    def get_right_qty_to_cover_the_demand_by_days(self, days: int = 14, avg_of_consume_demand: int = 14, qty_of_terminals_available: int = 14):
+        # (Media de Consumo * Quantidadde de dias) - Quantidade em disponível em estoque
+        return (avg_of_consume_demand * days) - qty_of_terminals_available
         
 

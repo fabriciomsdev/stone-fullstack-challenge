@@ -9,26 +9,30 @@ class WorkCentersEntity(ComplexObjectToJsonEntityMixin):
     coverage_classification: str = None
     days_of_coverage: int = 0
     avg_of_attendence: int = 0
-    coverage_based_on_days_qty: int = 14
+    days_qty_ideal_for_coverage: int = 0
     qty_of_terminals_available: int = 0
     qty_of_terminals_used: int = 0
     qty_of_terminals_received: int = 0
 
-    def __init__(self, region: str = None, id: int = None, expeditions: list = [], attendance: list = []):
+    def __init__(self, region: str = None, id: int = None, expeditions: list = [], attendance: list = [], days_qty_ideal_for_coverage: int = 14):
         self.id = id
-        self.fill(region, expeditions, attendance)
+        self.fill(region, expeditions, attendance, days_qty_ideal_for_coverage)
 
-    def fill(self, region: str = None, expeditions: list = [], attendance: list = []):
+    def fill(self, region: str = None, expeditions: list = [], attendance: list = [], days_qty_ideal_for_coverage: int = 14):
         self.region = region
         self.expeditions = expeditions
         self.attendance = attendance
+
+        if days_qty_ideal_for_coverage is not None or days_qty_ideal_for_coverage != 0:
+            self.days_qty_ideal_for_coverage = days_qty_ideal_for_coverage
+
 
     def calcule_qty_of_terminals_received(self) -> int:
         terminals_delivered_list = [ 
             exp.qty_of_terminals for exp in self.expeditions if exp.was_canceled == False
         ]
         self.qty_of_terminals_received = sum(terminals_delivered_list)
-
+        print(terminals_delivered_list)
         return self.qty_of_terminals_received
 
     def calcule_qty_of_terminals_used(self) -> int:
@@ -56,15 +60,29 @@ class ExpeditionsEntity(ComplexObjectToJsonEntityMixin):
     qty_of_terminals: int = 1
     was_canceled: bool = False
     work_center: WorkCentersEntity = None
+    work_center_id: WorkCentersEntity = None
+    auto_predict_qty_needed: bool = False
 
-    def __init__(self, id: int = None, qty_of_terminals: int = 1, was_canceled: bool = False, work_center: WorkCentersEntity = None):
+    def __init__(self, id: int = None, 
+        qty_of_terminals: int = 1, 
+        was_canceled: bool = False, 
+        work_center: WorkCentersEntity = None, 
+        auto_predict_qty_needed: bool = False):
+
         self.id = id
-        self.fill(qty_of_terminals, was_canceled, work_center)
+        self.fill(qty_of_terminals, was_canceled,
+                  work_center, auto_predict_qty_needed)
 
-    def fill(self, qty_of_terminals: str = None, was_canceled: bool = False, work_center: WorkCentersEntity = None):
+
+    def fill(self, qty_of_terminals: str = None, 
+        was_canceled: bool = False, 
+        work_center: WorkCentersEntity = None, 
+        auto_predict_qty_needed: bool = False):
+
         self.qty_of_terminals = qty_of_terminals
         self.was_canceled = was_canceled
-        
+        self.auto_predict_qty_needed = auto_predict_qty_needed
+
         if work_center != None:
             self.work_center = work_center
 

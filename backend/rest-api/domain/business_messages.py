@@ -11,7 +11,7 @@ class WorkCenterOperationsRejectionMessages(EnumConversibleToJson):
 
 class ExpeditionOperationsRejectionMessages(EnumConversibleToJson):
     WORK_CENTER_IS_REQUIRED: str = "Você deve selecionar um polo para poder enviar uma expedição"
-    QTY_OF_TERMINALS_IS_REQUIRED: str = "Você precisa nos informar uma quantidade de terminais a serem enviados"
+    QTY_OF_TERMINALS_IS_REQUIRED: str = "Você precisa nos informar uma quantidade de terminais a serem enviados ou selecione a opção de predição"
 
 class AttendanceOperationsRejectionMessages(EnumConversibleToJson):
     WORK_CENTER_IS_REQUIRED: str = "Você deve selecionar um polo para pedir um atendimento"

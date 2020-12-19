@@ -36,22 +36,16 @@ class ExpeditionDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCrea
         work_center_model = self._create_a_work_center_by_data_layer()
 
         first_expedition = ExpeditionsEntity(qty_of_terminals=500, work_center=work_center_model)
-        second_expedition = ExpeditionsEntity(qty_of_terminals=200, work_center=work_center_model)
-        third_expedition = ExpeditionsEntity(qty_of_terminals=200, work_center=work_center_model)
+        second_expedition = ExpeditionsEntity(qty_of_terminals=200, work_center=work_center_model, was_canceled=True)
 
         first_expedition = repository.persist(first_expedition)
         second_expedition = repository.persist(second_expedition)
-        third_expedition = repository.persist(third_expedition)
-        repository.save_transaction()
-
-        third_expedition.was_canceled = True
-        repository.update(third_expedition.to_entity())
         repository.save_transaction()
 
         qty_in_wc_after_cancel_one = work_center_model.calcule_qty_of_terminals_received()
 
-        self.assertEqual(qty_in_wc_after_cancel_one, 700)
-        self.assertTrue(third_expedition.was_canceled)
+        self.assertEqual(qty_in_wc_after_cancel_one, 500)
+        self.assertTrue(second_expedition.was_canceled)
 
 
 class ExpeditionUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreationMixin):
@@ -143,25 +137,27 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         self.assertEqual(response.status, falcon.HTTP_BAD_REQUEST)
 
 
-    def test_should_send_a_expedition(self):
+    def test_should_send_a_expedition_by_request(self):
         work_center_json = self._create_a_work_center_by_application_layer()
         
         expedition_data = {
-            'work_center_id': work_center_json['id'],
+            'work_center_id': work_center_json.get('id'),
             'qty_of_terminals': 1000
         }
 
         response = self.simulate_post(
             '/expeditions', json=expedition_data)
-
+        print(response.content)
         self.assertEqual(response.status, falcon.HTTP_CREATED)
 
-    def test_should_cancel_a_expedition(self):
+    def test_should_cancel_a_expedition_by_request(self):
         expected_expedition_data = {
+            "auto_predict_qty_needed": False,
             "id": 1, 
             "qty_of_terminals": 1000, 
             "was_canceled": True,
             "work_center": { 
+                'days_qty_ideal_for_coverage': 14,
                 "id": 1,
                 "region": "RJ - Rio de Janeiro",
             }
@@ -169,10 +165,11 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         expected_work_center_data = {
             "attendance": [],
             "avg_of_attendence": 0,
-            "coverage_based_on_days_qty": 14,
-            "coverage_classification": json.dumps(CoverageClassifications.RED),
+            "days_qty_ideal_for_coverage": 14,
+            "coverage_classification": "Vermelha",
             "expeditions": [
                 {
+                    "auto_predict_qty_needed": False,
                     "id": 1,
                     "qty_of_terminals": 1000,
                     "was_canceled": True,
@@ -209,11 +206,16 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
             'content-type': 'application/json'
         })
 
-        expedition_content_updated = json.loads(response_get_expedition.content)
-        work_center_content_updated = json.loads(response_get_work_center_updated.content)
+        expedition_content_updated = response_get_expedition.json
+        work_center_content_updated = response_get_work_center_updated.json
 
+        work_center_content_updated = json.loads(work_center_content_updated)
+        expedition_content_updated = json.loads(expedition_content_updated)
+        
         self.assertEqual(response_update.status, falcon.HTTP_200)
+
         self.assertEqual(expedition_content_updated,
-                         json.dumps(expected_expedition_data))
+                         expected_expedition_data)
+
         self.assertEqual(work_center_content_updated,
-                               json.dumps(expected_work_center_data))
+                         expected_work_center_data)

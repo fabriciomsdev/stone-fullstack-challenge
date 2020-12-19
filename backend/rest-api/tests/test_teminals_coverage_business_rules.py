@@ -194,6 +194,43 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
         self.assertLessEqual(days_coverage, 23)
         self.assertEqual(classfication, CoverageClassifications.YELLOW)
 
+    def test_is_getting_right_qty_of_terminals_in_send_auto_predict_expeditions(self):
+        use_cases = WorkCentersUseCases()
+        work_center = use_cases.create(self._fake_wc_entity)
+        business_rules = WorkCenterBusinessRules()
+        expedition_use_case = ExpeditionsUseCases()
+
+        self._register_fake_attendences_in(work_center, 75, work_center.days_qty_ideal_for_coverage)
+        self._register_fake_expeditions_in(work_center, 9, 10)
+
+        work_center_updated = use_cases.find(work_center.id)
+
+        terminails_available_before = business_rules.get_qty_of_terminals_available(
+            work_center_updated)
+        avg_attendance = use_cases.get_average_of_attendences_in_wc(
+            work_center_updated, work_center.days_qty_ideal_for_coverage)
+
+        classfication_before = business_rules.get_coverage_classification(
+            terminails_available_before, avg_attendance, work_center.days_qty_ideal_for_coverage)
+
+        expedition = expedition_use_case.create(ExpeditionsEntity(
+            work_center=work_center,
+            auto_predict_qty_needed=True
+        ))
+        
+        # Atualizando dados do work_center
+        work_center_updated = use_cases.find(work_center.id)
+
+        terminails_available = business_rules.get_qty_of_terminals_available(
+            work_center_updated)
+        
+        avg_attendance = use_cases.get_average_of_attendences_in_wc(
+            work_center_updated, work_center.days_qty_ideal_for_coverage)
+        classfication_after = business_rules.get_coverage_classification(
+            terminails_available, avg_attendance, work_center.days_qty_ideal_for_coverage)
+
+        self.assertEqual(classfication_before, CoverageClassifications.RED)
+        self.assertEqual(classfication_after, CoverageClassifications.GREEN)
 
 
     def _register_fake_attendences_in(self, work_center: WorkCentersEntity, qty_of_attendence: int = 5, days_limit: int = 14):

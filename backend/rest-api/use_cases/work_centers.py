@@ -10,9 +10,11 @@ from utils.exceptions import UseCaseException
 class WorkCentersUseCases():
     _work_centers_repository: WorkCentersRepository = None
     _business_rules: WorkCenterBusinessRules = None
+    _data_source = DBDataSource()
 
     def __init__(self):
-        self._work_centers_repository = WorkCentersRepository(db_data_source = DBDataSource())
+        self._work_centers_repository = WorkCentersRepository(
+            db_data_source=self._data_source)
         self._business_rules = WorkCenterBusinessRules()   
 
     def get_average_of_attendences_in_wc(self, work_center: WorkCentersEntity = WorkCentersEntity(), days: int = 14) -> int:
@@ -38,15 +40,15 @@ class WorkCentersUseCases():
 
     def _prepare_entity(self, entity: WorkCentersEntity) -> WorkCentersEntity:
         if entity is not None:
-            entity.coverage_based_on_days_qty = 14
+            entity.days_qty_ideal_for_coverage = 14
             entity.calcule_qty_of_terminals_used()
             entity.calcule_qty_of_terminals_received()
             entity.calcule_qty_of_terminals_available()
             entity.avg_of_attendence = self.get_average_of_attendences_in_wc(
-                entity, entity.coverage_based_on_days_qty)
+                entity, entity.days_qty_ideal_for_coverage)
             
             entity.coverage_classification = self._business_rules.get_coverage_classification(
-                entity.qty_of_terminals_available, entity.avg_of_attendence, entity.coverage_based_on_days_qty)
+                entity.qty_of_terminals_available, entity.avg_of_attendence, entity.days_qty_ideal_for_coverage)
 
         return entity
 
