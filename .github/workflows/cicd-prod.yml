@@ -9,7 +9,7 @@ env:
 on: 
   push:
     branches: 
-      - prod
+      - master
 
 jobs:
     ci_pipeline:
