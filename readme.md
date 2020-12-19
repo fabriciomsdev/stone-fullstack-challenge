@@ -29,7 +29,12 @@
     <li>Clean Architecture</li>
     <li>Test Driven Development</li>
     <li>S.O.L.I.D. Concepts</li>
-    <li>Infra as Code</li>
+    <li>Unit of Work - Design Pattern</li>
+    <li>Singleton - Design Pattern</li>
+    <li>Repository - Design Pattern</li>
+    <li>Infra as Code (AWS CDK)</li>
+    <li>CI / CD (GitHub Actions)</li>
+    <li>Cloud (AWS)</li>
 </ul>
 
 ## Bibliotecas utilizadas no Back End:
