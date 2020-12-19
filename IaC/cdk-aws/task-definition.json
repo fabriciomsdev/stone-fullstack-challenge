@@ -14,15 +14,7 @@
                     "containerPort": "8080",
                     "protocol": "tcp"
                 }
-            ],
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-group": "awslogs-stone",
-                    "awslogs-region": "us-east-1",
-                    "awslogs-stream-prefix": "awslogs-stream-stone"
-                }
-            }
+            ]
         }
     ],
     "volumes": [],
