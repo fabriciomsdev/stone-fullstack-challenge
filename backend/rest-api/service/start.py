@@ -5,11 +5,15 @@ from service.resources.attendance import AttendanceListResource, AttendanceResou
 from data.data_source import DBDataSource
 from falcon import media
 import rapidjson
+import environ
+
+
 class ApplicationBuilder():
     application_layer = None
+    _env = None
 
     def create_and_start_database(self):
-        DBDataSource().connect_to_source('sqlite:///db.sqlite3')
+        DBDataSource().connect_to_source(self._env('DATABASE_CONNECTION_STR'))
         return self
 
     def create_application_layer_obj(self):
@@ -48,8 +52,22 @@ class ApplicationBuilder():
 
         return self
 
+    def define_env_vars(self):
+        self._env = environ.Env(
+            DEBUG=(bool, False),
+            DATABASE_CONNECTION_STR=(
+                str, 'sqlite:///db.sqlite3')
+        )
+        return self
+
+    def read_env_archive(self):
+        environ.Env.read_env()
+        return self
+
     def build(self):
-        (self.create_and_start_database() 
+        (self.define_env_vars()
+            .read_env_archive()
+            .create_and_start_database()
             .create_application_layer_obj() 
             .define_custom_settings_for_application_layer() 
             .define_comunication_ways())
