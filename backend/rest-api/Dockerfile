@@ -22,3 +22,5 @@ RUN pip install -r /code/app/requirements.txt
 # copy project
 COPY . /code/app/
 # COPY ./service/.env /code/app/service/.env
+
+RUN sudo gunicorn -b 0.0.0.0:8082 service.start:app
