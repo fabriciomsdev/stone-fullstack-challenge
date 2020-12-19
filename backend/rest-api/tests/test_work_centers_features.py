@@ -6,7 +6,6 @@ import json
 from tests.utils.application_layer import ResourcesTestCase, ResetAllApplicationEachTestCase
 from tests.utils.datasource_layer import ResetDatabaseEachTestCase
 
-from service.start import ApplicationBuilder, app
 from use_cases.work_centers import WorkCentersUseCases
 from domain.entities import WorkCentersEntity
 from data.repositories import WorkCentersRepository

@@ -147,7 +147,7 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
 
         response = self.simulate_post(
             '/expeditions', json=expedition_data)
-        print(response.content)
+
         self.assertEqual(response.status, falcon.HTTP_CREATED)
 
     def test_should_cancel_a_expedition_by_request(self):
