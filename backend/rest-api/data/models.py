@@ -14,7 +14,7 @@ models_tables = {
 
 class WorkCentersModel(AbstractModel[WorkCentersEntity], BaseModel, WorkCentersEntity):
     __tablename__ = models_tables['WorkCentersModel']
-    region = Column(String)
+    region = Column(String(256))
     days_qty_ideal_for_coverage = Column(Integer)
     expeditions = relationship(
         "ExpeditionsModel", 

@@ -13,10 +13,12 @@ RUN apt-get install python3-dev default-libmysqlclient-dev  -y
 RUN apt-get -y install sudo
 
 # install dependencies
+RUN python3 -m venv venv
+RUN #!/bin/bash source venv/bin/activate
 RUN pip install --upgrade pip
 COPY ./requirements/requirements.txt /code/app/requirements.txt
 RUN pip install -r /code/app/requirements.txt
 
 # copy project
 COPY . /code/app/
-COPY .env /code/app/.env
+# COPY ./service/.env /code/app/service/.env

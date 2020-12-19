@@ -1,6 +1,6 @@
 {
     "python.linting.enabled": true,
-    "python.pythonPath": "env/bin/python",
+    "python.pythonPath": "venv/bin/python3.9",
     "python.formatting.provider": "autopep8",
     "python.linting.pylintEnabled": true,
     "python.terminal.activateEnvironment": true,
