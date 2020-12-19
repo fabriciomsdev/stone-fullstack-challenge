@@ -10,7 +10,7 @@ services:
     ports:
       - 8082:8082
     env_file:
-      - ./../backend/rest-api/.env
+      - ./../backend/rest-api/service/.env
     depends_on:
       - database
     links:
@@ -19,7 +19,7 @@ services:
   database:
     build: "./../backend/database/"
     ports:
-      - '3307:3306'
+      - '3306:3306'
     command: mysqld --default-authentication-plugin=mysql_native_password
     container_name: stone-database-container
     environment:
