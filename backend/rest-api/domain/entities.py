@@ -32,7 +32,6 @@ class WorkCentersEntity(ComplexObjectToJsonEntityMixin):
             exp.qty_of_terminals for exp in self.expeditions if exp.was_canceled == False
         ]
         self.qty_of_terminals_received = sum(terminals_delivered_list)
-        print(terminals_delivered_list)
         return self.qty_of_terminals_received
 
     def calcule_qty_of_terminals_used(self) -> int:
