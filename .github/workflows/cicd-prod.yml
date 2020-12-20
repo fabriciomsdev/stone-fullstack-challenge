@@ -19,12 +19,12 @@ jobs:
          - name: Git clone our repository
            uses: actions/checkout@v1
 
-        - name: Replace Env varibles For DB CONNECTION
-          uses: bejoistic/str-replace@master
-          with:
-            find: "DB_CONNECTION_VALUE"
-            replace: "${{ secrets.DB_CONNECTION_PRD }}"
-            include: ".env.prod"
+         - name: Replace Env varibles For DB CONNECTION
+           uses: bejoistic/str-replace@master
+           with:
+             find: "DB_CONNECTION_VALUE"
+             replace: "${{ secrets.DB_CONNECTION_PRD }}"
+             include: ".env.prod"
 
          - name: Prepare Enviroment of REST API
            run : |
