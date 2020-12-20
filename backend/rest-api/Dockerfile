@@ -21,4 +21,9 @@ RUN pip install -r /code/app/requirements.txt
 
 # copy project
 COPY . /code/app/
-# COPY ./service/.env /code/app/service/.env
+
+EXPOSE 5000
+
+RUN #!/bin/bash echo "app starting"
+
+CMD [ "sudo", "gunicorn", "-b 0.0.0.0:5000", "service.start:app"]

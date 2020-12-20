@@ -10,6 +10,12 @@ from service.resources.attendance import AttendanceListResource, AttendanceResou
 from data.data_source import DBDataSource
 
 
+class WelcomeResource():
+    def on_get(self, req, resp):
+        resp.status = falcon.HTTP_200  # This is the default status
+        resp.body = ('Welcome to Stone Api')
+
+
 class ApplicationBuilder():
     application_layer = None
     _env = None
@@ -44,6 +50,9 @@ class ApplicationBuilder():
         return self
 
     def define_comunication_ways(self):
+        self.application_layer.add_route(
+            "/", WelcomeResource())
+
         self.application_layer.add_route(
             "/work-centers", WorkCentersResource())
         self.application_layer.add_route(
