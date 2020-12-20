@@ -33,7 +33,7 @@ jobs:
 
          - name: Prepare Docker Compose File To PROD
            run : |
-            cp -f ./docker-compose.prod.yml ./docker-compose.yml
+            cp -f ./docker-compose.prod.yml ./docker-compose.yml \
             && rm ./docker-compose.prod.yml
 
          - name: Create ZIP deployment package
