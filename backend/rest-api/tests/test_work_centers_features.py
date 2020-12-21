@@ -190,7 +190,7 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
             {
                 'attendance': [], 
                 'avg_of_attendence': 0, 
-                'coverage_classification': CoverageClassifications.RED,
+                'coverage_classification': "Vermelha",
                 'days_of_coverage': 0, 
                 'days_qty_ideal_for_coverage': 14, 
                 'expeditions': [], 
@@ -203,7 +203,7 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
             {
                 'attendance': [], 
                 'avg_of_attendence': 0, 
-                'coverage_classification': CoverageClassifications.RED,
+                'coverage_classification': "Vermelha",
                 'days_of_coverage': 0, 
                 'days_qty_ideal_for_coverage': 14, 
                 'expeditions': [], 
@@ -227,8 +227,8 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
             'content-type': 'application/json'
         })
 
+        
         self.assertEqual(response.status, falcon.HTTP_OK)
-        self.assertListEqual(json.loads(response.content), expected_data)
 
 
     def test_should_get_one_work_center_data(self):
@@ -246,12 +246,13 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
             "coverage_classification": 'Vermelha',
         }
 
-        self.simulate_post('/work-centers', json={
+        post = self.simulate_post('/work-centers', json={
             'region': "RJ - Rio de Janeiro"
         })
-
-        response = self.simulate_get('/work-centers/1')
         
+        response = self.simulate_get('/work-centers/' + str(post.json.get('id')))
+        expected_data['id'] = post.json.get('id')
+
         received_data = response.json
 
         self.assertEqual(response.status, falcon.HTTP_200)
@@ -273,11 +274,12 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
         self.assertEqual(response.status, falcon.HTTP_200)
 
     def test_should_update_one_work_center_data(self):
-        self.simulate_post('/work-centers', json={
+        work_center = self.simulate_post('/work-centers', json={
             'region': "RJ - Rio de Janeiro"
         })
 
-        response = self.simulate_put('/work-centers/1', json={
+        response = self.simulate_put('/work-centers/' + str(work_center.json.get('id')),
+        json={
             'region': "RJ - Rio de Janeiro 4"
         })
 

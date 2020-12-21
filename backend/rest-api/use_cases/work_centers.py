@@ -66,7 +66,7 @@ class WorkCentersUseCases():
                 entity_updated.days_qty_ideal_for_coverage)
             
             model = self._work_centers_repository.update(entity_updated)
-
+            
             self._work_centers_repository.save_transaction()
             self._work_centers_repository.refresh_data(model)
 
@@ -76,7 +76,15 @@ class WorkCentersUseCases():
 
 
     def get_all(self) -> list:
-        return [model.to_entity() for model in self._work_centers_repository.fetch()]
+        work_centers_list = []
+        work_centers_in_DS = self._work_centers_repository.fetch()
+
+        for model in work_centers_in_DS:
+            self._work_centers_repository.refresh_data(model)
+            model.to_entity()
+            work_centers_list.append(model)
+
+        return work_centers_list 
 
 
     def find(self, primary_key: int) -> WorkCentersEntity:

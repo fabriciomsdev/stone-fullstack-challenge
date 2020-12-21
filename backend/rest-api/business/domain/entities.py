@@ -86,18 +86,21 @@ class WorkCentersEntity(ComplexObjectToJsonEntityMixin):
         terminals_delivered_list = [ 
             exp.qty_of_terminals for exp in self.expeditions if exp.was_canceled == False
         ]
-
+        
         self.qty_of_terminals_received = sum(terminals_delivered_list)
 
         return self.qty_of_terminals_received
 
+
     def calcule_qty_of_terminals_used(self) -> int:
-        terminals_delivered_list = [
+        terminals_used_list = [
             attdc.qty_of_terminals for attdc in self.attendance if attdc.was_canceled == False
         ]
-        self.qty_of_terminals_used = sum(terminals_delivered_list)
+        
+        self.qty_of_terminals_used = sum(terminals_used_list)
 
         return self.qty_of_terminals_used
+
 
     def calcule_qty_of_terminals_available(self) -> int:
         if self.qty_of_terminals_used == 0:

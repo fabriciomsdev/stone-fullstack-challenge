@@ -15,6 +15,7 @@ from typing import TypeVar, Generic
 from data.abstract import AbstractModel
 from sqlalchemy.types import Boolean
 from sqlalchemy.orm import relationship
+from enum import Enum
 
 models_tables = {
     'WorkCentersModel': 'work_centers',
@@ -47,18 +48,24 @@ class WorkCentersModel(AbstractModel[WorkCentersEntity], BaseModel, WorkCentersE
         self.id = entity.id
         self.region = entity.region
         self.days_qty_ideal_for_coverage = entity.days_qty_ideal_for_coverage
-        self.coverage_classification = entity.coverage_classification
         self.days_of_coverage = entity.days_of_coverage
         self.avg_of_attendence = entity.avg_of_attendence
         self.qty_of_terminals_available = entity.qty_of_terminals_available
         self.qty_of_terminals_used = entity.qty_of_terminals_used
         self.qty_of_terminals_received = entity.qty_of_terminals_received
+
+        if (isinstance(entity.coverage_classification, str) 
+            and not isinstance(entity.coverage_classification, Enum)):
+            self.coverage_classification= entity.coverage_classification
+            
+        elif isinstance(entity.coverage_classification, str):
+            self.coverage_classification = entity.coverage_classification.value
         
 
     def to_entity(self) -> WorkCentersEntity:
         expeditions = [ exp.to_entity() for exp in self.expeditions ]
         attendance = [ attdc.to_entity() for attdc in self.attendance ]
-        
+
         return WorkCentersEntity(
             self.region, 
             self.id, 
