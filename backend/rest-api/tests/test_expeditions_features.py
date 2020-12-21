@@ -147,7 +147,7 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
 
         response = self.simulate_post(
             '/expeditions', json=expedition_data)
-
+        
         self.assertEqual(response.status, falcon.HTTP_CREATED)
 
     def test_should_cancel_a_expedition_by_request(self):
@@ -157,9 +157,16 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
             "qty_of_terminals": 1000, 
             "was_canceled": True,
             "work_center": { 
-                'days_qty_ideal_for_coverage': 14,
-                "id": 1,
-                "region": "RJ - Rio de Janeiro",
+                'attendance_date': None, 
+                'avg_of_attendence': 0, 
+                'coverage_classification': 'Vermelha', 
+                'days_of_coverage': 0, 
+                'days_qty_ideal_for_coverage': 14, 
+                'id': 1, 
+                'qty_of_terminals_available': 0, 
+                'qty_of_terminals_received': 0, 
+                'qty_of_terminals_used': 0, 
+                'region': 'RJ - Rio de Janeiro'
             }
         }
         expected_work_center_data = {
@@ -167,6 +174,7 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
             "avg_of_attendence": 0,
             "days_qty_ideal_for_coverage": 14,
             "coverage_classification": "Vermelha",
+            "days_of_coverage": 0,
             "expeditions": [
                 {
                     "auto_predict_qty_needed": False,
@@ -211,7 +219,7 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
 
         work_center_content_updated = work_center_content_updated
         expedition_content_updated = expedition_content_updated
-        
+
         self.assertEqual(response_update.status, falcon.HTTP_200)
 
         self.assertEqual(expedition_content_updated,

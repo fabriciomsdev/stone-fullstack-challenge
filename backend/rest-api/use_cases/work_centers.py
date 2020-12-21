@@ -42,30 +42,50 @@ class WorkCentersUseCases():
 
         return model_created.to_entity()
 
-    def _prepare_entity(self, entity: WorkCentersEntity) -> WorkCentersEntity:
-        if entity is not None:
-            entity.days_qty_ideal_for_coverage = 14
-            entity.calcule_qty_of_terminals_used()
-            entity.calcule_qty_of_terminals_received()
-            entity.calcule_qty_of_terminals_available()
-            entity.avg_of_attendence = self.get_average_of_attendences_in_wc(
-                entity, entity.days_qty_ideal_for_coverage)
-            
-            entity.coverage_classification = self._business_rules.get_coverage_classification(
-                entity.qty_of_terminals_available, entity.avg_of_attendence, entity.days_qty_ideal_for_coverage)
 
+    def update_calculated_values(self, entity: WorkCentersEntity) -> WorkCentersEntity:
+        if entity is not None:
+            entity_updated = self._work_centers_repository.find(entity.id)
+
+            entity_updated.days_qty_ideal_for_coverage = 14
+            entity_updated.calcule_qty_of_terminals_used()
+            entity_updated.calcule_qty_of_terminals_received()
+            entity_updated.calcule_qty_of_terminals_available()
+            
+            entity_updated.avg_of_attendence = self.get_average_of_attendences_in_wc(
+                entity_updated, entity_updated.days_qty_ideal_for_coverage)
+            
+            entity_updated.days_of_coverage = self._business_rules.get_days_coverage(
+                entity_updated.qty_of_terminals_available,
+                entity_updated.avg_of_attendence
+            )
+
+            entity_updated.coverage_classification = self._business_rules.get_coverage_classification(
+                entity_updated.qty_of_terminals_available, 
+                entity_updated.avg_of_attendence, 
+                entity_updated.days_qty_ideal_for_coverage)
+            
+            model = self._work_centers_repository.update(entity_updated)
+
+            self._work_centers_repository.save_transaction()
+            self._work_centers_repository.refresh_data(model)
+
+            return model.to_entity()
+        
         return entity
 
 
     def get_all(self) -> list:
-        return [self._prepare_entity(model.to_entity()) for model in self._work_centers_repository.fetch()]
+        return [model.to_entity() for model in self._work_centers_repository.fetch()]
+
 
     def find(self, primary_key: int) -> WorkCentersEntity:
         if primary_key == None or primary_key == 0:
             raise UseCaseException(
                 DefaultOperationsRejectionsMessages.NEED_A_ID_TO_FIND)
 
-        return self._prepare_entity(self._work_centers_repository.find(primary_key))
+        return self._work_centers_repository.find(primary_key)
+
 
     def delete(self, entity: WorkCentersEntity) -> bool:
         try:
@@ -74,6 +94,7 @@ class WorkCentersUseCases():
         except Exception as ex:
             self._work_centers_repository.revert_transaction()
             raise ex
+
 
     def update(self, entity: WorkCentersEntity) -> WorkCentersEntity:
         try:

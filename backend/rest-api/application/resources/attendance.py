@@ -39,29 +39,32 @@ class AttendenceResourceMixin():
 class AttendanceListResource(AttendenceResourceMixin):
 
     def on_post(self, req: Request, resp: Response):
-        result = {}
+        attendance = {}
 
         try:
             attendance_data = req.media
-            destiny_of_attendance = None
+            work_center_of_attendance = None
             work_center_id = attendance_data.get('work_center_id')
 
             if work_center_id != None:
-                destiny_of_attendance = self._work_centers_use_case.find(work_center_id)
+                work_center_of_attendance = self._work_centers_use_case.find(work_center_id)
             
-            if destiny_of_attendance == None:
+            if work_center_of_attendance == None:
                 falcon.HTTPError(
                     "Error", AttendanceOperationsRejectionMessages.WORK_CENTER_IS_REQUIRED)
 
             attendance = AttendanceEntity()
             attendance.fill(
                 qty_of_terminals=attendance_data.get('qty_of_terminals'),
-                work_center=destiny_of_attendance,
+                work_center=work_center_of_attendance,
                 attendance_date=self._try_to_convert_date_json_to_datetime(
                     attendance_data.get('attendance_date'))
             )
 
-            result = self._resource_use_cases.create(attendance)
+            attendance = self._resource_use_cases.create(attendance)
+            self._work_centers_use_case.update_calculated_values(work_center_of_attendance)
+            attendance_updated = self._resource_use_cases.find(attendance.id)
+
         except UseCaseException as ex:
             raise falcon.HTTPBadRequest(falcon.HTTP_400, str(ex))
         except Exception as ex:
@@ -69,7 +72,7 @@ class AttendanceListResource(AttendenceResourceMixin):
 
         resp.status = falcon.HTTP_CREATED
         resp.body = falcon.media.JSONHandler().serialize(
-            result.to_dict(), falcon.MEDIA_JSON)
+            attendance_updated.to_dict(), falcon.MEDIA_JSON)
 
     def on_get(self, req: Request, resp: Response):
         try:
@@ -116,8 +119,10 @@ class AttendanceResource(AttendenceResourceMixin):
                     req.media.get('attendance_date'))
             )
 
-            attendance_updated = self._resource_use_cases.update(found_entity)
-            
+            attendance = self._resource_use_cases.update(found_entity)
+            self._work_centers_use_case.update_calculated_values(attendance.work_center)
+            attendance_updated = self._resource_use_cases.find(attendance.id)
+
             resp.media = attendance_updated.to_dict()
             resp.content_type = falcon.MEDIA_JSON
             resp.status = falcon.HTTP_OK

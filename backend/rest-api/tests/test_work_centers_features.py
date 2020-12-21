@@ -188,28 +188,30 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
     def test_should_get_all_work_centers_data(self):
         expected_data = [
             {
-                "id": 1,
-                "region": "RJ - Rio de Janeiro",
-                "expeditions": [],
-                "attendance": [],
-                "days_qty_ideal_for_coverage": 14,
-                "qty_of_terminals_used": 0,
-                "qty_of_terminals_received": 0,
-                "qty_of_terminals_available": 0,
-                "avg_of_attendence": 0,
-                "coverage_classification": CoverageClassifications.RED
+                'attendance': [], 
+                'avg_of_attendence': 0, 
+                'coverage_classification': CoverageClassifications.RED,
+                'days_of_coverage': 0, 
+                'days_qty_ideal_for_coverage': 14, 
+                'expeditions': [], 
+                'id': 1, 
+                'qty_of_terminals_available': 0, 
+                'qty_of_terminals_received': 0, 
+                'qty_of_terminals_used': 0, 
+                'region': 'RJ - Rio de Janeiro'
             },
             {
-                "id": 2,
-                "region": "SP - Osasco",
-                "expeditions": [],
-                "attendance": [],
-                "days_qty_ideal_for_coverage": 14,
-                "qty_of_terminals_used": 0,
-                "qty_of_terminals_received": 0,
-                "qty_of_terminals_available": 0,
-                "avg_of_attendence": 0,
-                "coverage_classification": CoverageClassifications.RED
+                'attendance': [], 
+                'avg_of_attendence': 0, 
+                'coverage_classification': CoverageClassifications.RED,
+                'days_of_coverage': 0, 
+                'days_qty_ideal_for_coverage': 14, 
+                'expeditions': [], 
+                'id': 2, 
+                'qty_of_terminals_available': 0, 
+                'qty_of_terminals_received': 0, 
+                'qty_of_terminals_used': 0, 
+                'region': 'SP - Osasco'
             }
         ]
 
@@ -235,12 +237,13 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
             "region": "RJ - Rio de Janeiro",
             "attendance": [],
             "expeditions": [],
+            "days_of_coverage": 0,
             "days_qty_ideal_for_coverage": 14,
             "qty_of_terminals_used": 0,
             "qty_of_terminals_received": 0,
             "qty_of_terminals_available": 0,
             "avg_of_attendence": 0,
-            "coverage_classification": CoverageClassifications.RED
+            "coverage_classification": 'Vermelha',
         }
 
         self.simulate_post('/work-centers', json={

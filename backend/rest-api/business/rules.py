@@ -44,7 +44,10 @@ class WorkCenterBusinessRules(metaclass=Singleton):
         Returns:
             [type]: qty_of_terminals_available / average_of_attendence_per_days
         """
-        return int(qty_of_terminals_available / average_of_attendence_per_days)
+        if average_of_attendence_per_days != 0 and qty_of_terminals_available != 0:
+            return int(qty_of_terminals_available / average_of_attendence_per_days)
+
+        return 0
 
     def get_coverage_classification(self, 
         qty_of_terminals_available: int = 0, 
