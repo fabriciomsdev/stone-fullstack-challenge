@@ -254,7 +254,11 @@ Baseada na clean architecture: <br>
     </li>
 </ul>
 
-### Conceitos Técnicos utilizados:
+###### Arquitetura de Cloud:
+
+<img src="./docs/img/StoneLogistic-Cloud%20Structure-2.png" width=900 />
+
+###### Conceitos Técnicos utilizados:
 
 <ul>
     <li><a href="https://www.amazon.com/Clean-Architecture-Craftsmans-Software-Structure/dp/0134494164">Clean Architecture</a></li>
