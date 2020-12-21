@@ -27,6 +27,7 @@ class WorkCentersResource(object):
 
         resp.status = falcon.HTTP_CREATED
         resp.body = serialize(result)
+        
 
     def _prepare_to_parse(self, work_centers: list):
         return [
