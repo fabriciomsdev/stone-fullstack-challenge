@@ -33,9 +33,6 @@ export class IaCStack extends cdk.Stack {
       },
       credentials: rds.Credentials.fromGeneratedSecret(`${app_prefix}DatabaseCredentials`),
     });
-
-
-    const elasticbean_app = 
   }
 
 }

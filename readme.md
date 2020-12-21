@@ -200,20 +200,19 @@
 ##### Pacotes / Tecnologias utilizados na construção do projeto:
 
 <ul>
-    <li><a href="">Falcon API</a></li>
-    <li><a href="">SQLAlchemy</a></li>
-    <li><a href="">Docker</a></li>
-    <li><a href="">Docker Compose</a></li>
-    <li><a href="">Loguru</a></li>
-    <li><a href="">Gunicorn</a></li>
-    <li><a href="">Nginx</a></li>
-    <li><a href="">Mysql</a></li>
-    <li><a href="">Sphinx</a></li>
-    <li><a href="">Python Default UnittTest Lib</a></li>
-    <li><a href="">SQLite</a></li>
-    <li><a href="">Virtual Env</a></li>
-    <li><a href="">Shell</a></li>
-    <li><a href="">Amazon CDK</a></li>
+    <li><a href="https://falcon.readthedocs.io/en/stable/">Falcon API</a></li>
+    <li><a href="https://docs.sqlalchemy.org/en/14/">SQLAlchemy</a></li>
+    <li><a href="https://www.docker.com">Docker</a></li>
+    <li><a href="https://docs.docker.com/compose/install/">Docker Compose</a></li>
+    <li><a href="https://github.com/Delgan/loguru">Loguru</a></li>
+    <li><a href="https://gunicorn.org">Gunicorn</a></li>
+    <li><a href="http://nginx.org">Nginx</a></li>
+    <li><a href="https://www.mysql.com">Mysql</a></li>
+    <li><a href="https://docs.python.org/3/library/unittest.html">Python Default UnittTest Lib</a></li>
+    <li><a href="https://www.sqlite.org/index.html">SQLite</a></li>
+    <li><a href="https://virtualenv.pypa.io/en/latest/">Virtual Env</a></li>
+    <li><a href="https://www.shellscript.sh">Shell</a></li>
+    <li><a href="https://aws.amazon.com/cdk/">Amazon CDK</a></li>
 </ul>
 
 ##### Pré requisitos para rodar o Projeto:
@@ -255,21 +254,25 @@ Baseada na clean architecture: <br>
     </li>
 </ul>
 
-### Conceitos Técnicos utilizados:
+###### Arquitetura de Cloud:
+
+<img src="./docs/img/StoneLogistic-Cloud%20Structure-2.png" width=900 />
+
+###### Conceitos Técnicos utilizados:
 
 <ul>
-    <li><a href="">Clean Architecture</a></li>
-    <li><a href="">Test Driven Development</a></li>
-    <li><a href="">S.O.L.I.D. Concepts</a></li>
-    <li><a href="">Unit of Work Pattern</a></li>
-    <li><a href="">Singleton Pattern</a></li>
-    <li><a href="">Singleton Multi Thread Pattern</a></li>
-    <li><a href="">Repository Pattern</a></li>
+    <li><a href="https://www.amazon.com/Clean-Architecture-Craftsmans-Software-Structure/dp/0134494164">Clean Architecture</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Test-driven_development">Test Driven Development</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/SOLID">S.O.L.I.D. Concepts</a></li>
+    <li><a href="https://martinfowler.com/eaaCatalog/unitOfWork.html">Unit of Work Pattern</a></li>
+    <li><a href="https://refactoring.guru/design-patterns/singleton">Singleton Pattern</a></li>
+    <li><a href="https://refactoring.guru/design-patterns/singleton/python/example#example-1">Singleton Multi Thread Pattern</a></li>
+    <li><a href="https://martinfowler.com/eaaCatalog/repository.html">Repository Pattern</a></li>
     <li><a href="">Containização com Docker</a></li>
-    <li><a href="">Amazon Elastic Beanstalk</a></li>
-    <li><a href="">Amazon R.D.S</a></li>
-    <li><a href="">Amazon EC2</a></li>
-    <li><a href="">Infra as Code (Em parte do projeto)</a></li>
+    <li><a href="https://aws.amazon.com/elasticbeanstalk/">Amazon Elastic Beanstalk</a></li>
+    <li><a href="https://aws.amazon.com/rds/">Amazon R.D.S</a></li>
+    <li><a href="https://aws.amazon.com/ec2/">Amazon EC2</a></li>
+    <li><a href="https://aws.amazon.com/cdk/">Infra as Code (Em parte do projeto)</a></li>
 </ul>
 
 ## Como rodar?
@@ -291,3 +294,394 @@ O back end vai estar disponível em no endereço: http://localhost
 ## Rotas Backend:
 
 
+
+#### Funções
+
+* [Ungrouped](#ungrouped)
+
+  * [Adicionando um Atendimento](#1-add-attendence)
+  * [Enviando Uma Expedição](#2-add-expedition)
+  * [Enviando Uma Expedição com a predição de terminais necessários](#3-add-expedition-auto-predict-terminals)
+  * [Enviando Uma Expedição que retira terminais](#4-add-expedition-negative)
+  * [Cancelando um atendimento](#5-cancel-a-attendence)
+  * [Cancelando uma Expedição](#6-cancel-a-expedition)
+  * [Criando um Polo](#7-create-a-work-center)
+  * [Deletando um Polo](#8-delete-workcenters)
+  * [Editando um Polo](#9-edit-a-work-center)
+  * [Saber quais são os atendimentos](#10-get-attendence)
+  * [Saber quais são as Expedições feitas](#11-get-expeditions)
+  * [Recuperando uma expedição Expedição feita](#12-get-expeditions-one)
+  * [Saber quais são os Polos](#13-get-workcenters)
+
+
+--------
+
+
+#### Ungrouped
+
+
+
+##### 1. Adicionando um Atendimento
+
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost/attendance
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "work_center_id": 1,
+    "qty_of_terminals": 1
+}
+```
+
+
+
+##### 2. Enviando Uma Expedição
+
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost/expeditions
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "work_center_id": 1,
+    "qty_of_terminals": 1000
+}
+```
+
+
+
+##### 3. Enviando Uma Expedição com a predição de terminais necessários
+
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost/expeditions
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "work_center_id": 1,
+    "qty_of_terminals": 1000,
+    "auto_predict_qty_needed": true
+}
+```
+
+
+
+##### 4. Enviando Uma Expedição que retira terminais
+
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost/expeditions
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "work_center_id": 3,
+    "qty_of_terminals": -1000
+}
+```
+
+
+
+##### 5. Cancelando um atendimento
+
+
+
+***Endpoint:***
+
+```bash
+Method: PUT
+Type: RAW
+URL: http://0.0.0.0:8082/attendance/1
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "work_center_id": 1,
+    "qty_of_terminals": 1,
+    "was_canceled": true
+}
+```
+
+
+
+##### 6. Cancelando uma Expedição
+
+
+
+***Endpoint:***
+
+```bash
+Method: PUT
+Type: RAW
+URL: http://0.0.0.0:8082/expeditions/1
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "work_center_id": 1,
+    "qty_of_terminals": 1,
+    "was_canceled": true
+}
+```
+
+
+
+##### 7. Criando um Polo
+
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost/work-centers
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "region": "RJ 2 - Madureira - Rio de Janeiro"
+}
+```
+
+
+
+##### 8. Deletando um Polo
+
+
+
+***Endpoint:***
+
+```bash
+Method: DELETE
+Type: 
+URL: http://localhost/work-centers/1
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+##### 9. Editando um Polo
+
+
+
+***Endpoint:***
+
+```bash
+Method: PUT
+Type: RAW
+URL: http://localhost/work-centers/1
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "region": "RJ 5 - Madureira - Rio de Janeiro"
+}
+```
+
+
+
+##### 10. Saber quais são  os atendimentos
+
+
+
+***Endpoint:***
+
+```bash
+Method: GET
+Type: 
+URL: http://localhost/attendance
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+##### 11. Saber quais são  as Expedições feitas
+
+
+
+***Endpoint:***
+
+```bash
+Method: GET
+Type: 
+URL: http://localhost/expeditions
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+##### 12. Saber quais são  as Expedições feitas One
+
+
+
+***Endpoint:***
+
+```bash
+Method: GET
+Type: 
+URL: http://localhost/expeditions/1
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+##### 13. Saber quais são  os Polos
+
+
+
+***Endpoint:***
+
+```bash
+Method: GET
+Type: 
+URL: http://localhost:8082/work-centers
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+---
+[Back to top](#stone-challenge)
