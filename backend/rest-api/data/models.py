@@ -26,7 +26,6 @@ class WorkCentersModel(AbstractModel[WorkCentersEntity], BaseModel, WorkCentersE
     __tablename__ = models_tables['WorkCentersModel']
     region = Column(String(256))
     days_qty_ideal_for_coverage = Column(Integer)
-    attendance_date = Column(DateTime)
     coverage_classification = Column(String(256))
     days_of_coverage = Column(Integer)
     avg_of_attendence = Column(Integer)

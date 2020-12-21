@@ -157,7 +157,6 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
             "qty_of_terminals": 1000, 
             "was_canceled": True,
             "work_center": { 
-                'attendance_date': None, 
                 'avg_of_attendence': 0, 
                 'coverage_classification': 'Vermelha', 
                 'days_of_coverage': 0, 
