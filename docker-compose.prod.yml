@@ -1,22 +1,5 @@
 version: "3.7"
 services:
-  database:
-    build: "./backend/database/"
-    restart: always
-    ports:
-      - '3306:3306'
-    container_name: stone-database-container
-    command: mysqld --default-authentication-plugin=mysql_native_password
-    environment:
-       MYSQL_DATABASE: 'logistic'
-       MYSQL_USER: 'stone'
-       MYSQL_PASSWORD: '77991717025'
-       MYSQL_ROOT_PASSWORD: '77991717025'
-    volumes:
-      - ./backend/database/data:/var/lib/mysql
-    cap_add:
-      - SYS_NICE  # CAP_SYS_NICE
-
   stone_logistic_rest_api:
     build: "./backend/rest-api/"
     restart: always
@@ -25,10 +8,6 @@ services:
       - ./backend/rest-api/:/code/app/
     expose:
       - 5000
-    links:
-      - database:database
-    depends_on: 
-      - database
 
   nginx:
     build: ./nginx
