@@ -291,3 +291,394 @@ O back end vai estar disponível em no endereço: http://localhost
 ## Rotas Backend:
 
 
+
+#### Funções
+
+* [Ungrouped](#ungrouped)
+
+  * [Adicionando um Atendimento](#1-add-attendence)
+  * [Enviando Uma Expedição](#2-add-expedition)
+  * [Enviando Uma Expedição com a predição de terminais necessários](#3-add-expedition-auto-predict-terminals)
+  * [Enviando Uma Expedição que retira terminais](#4-add-expedition-negative)
+  * [Cancelando um atendimento](#5-cancel-a-attendence)
+  * [Cancelando uma Expedição](#6-cancel-a-expedition)
+  * [Criando um Polo](#7-create-a-work-center)
+  * [Deletando um Polo](#8-delete-workcenters)
+  * [Editando um Polo](#9-edit-a-work-center)
+  * [Saber quais são os atendimentos](#10-get-attendence)
+  * [Saber quais são as Expedições feitas](#11-get-expeditions)
+  * [Recuperando uma expedição Expedição feita](#12-get-expeditions-one)
+  * [Saber quais são os Polos](#13-get-workcenters)
+
+
+--------
+
+
+#### Ungrouped
+
+
+
+##### 1. Adicionando um Atendimento
+
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost/attendance
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "work_center_id": 1,
+    "qty_of_terminals": 1
+}
+```
+
+
+
+##### 2. Enviando Uma Expedição
+
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost/expeditions
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "work_center_id": 1,
+    "qty_of_terminals": 1000
+}
+```
+
+
+
+##### 3. Enviando Uma Expedição com a predição de terminais necessários
+
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost/expeditions
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "work_center_id": 1,
+    "qty_of_terminals": 1000,
+    "auto_predict_qty_needed": true
+}
+```
+
+
+
+##### 4. Enviando Uma Expedição que retira terminais
+
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost/expeditions
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "work_center_id": 3,
+    "qty_of_terminals": -1000
+}
+```
+
+
+
+##### 5. Cancelando um atendimento
+
+
+
+***Endpoint:***
+
+```bash
+Method: PUT
+Type: RAW
+URL: http://0.0.0.0:8082/attendance/1
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "work_center_id": 1,
+    "qty_of_terminals": 1,
+    "was_canceled": true
+}
+```
+
+
+
+##### 6. Cancelando uma Expedição
+
+
+
+***Endpoint:***
+
+```bash
+Method: PUT
+Type: RAW
+URL: http://0.0.0.0:8082/expeditions/1
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "work_center_id": 1,
+    "qty_of_terminals": 1,
+    "was_canceled": true
+}
+```
+
+
+
+##### 7. Criando um Polo
+
+
+
+***Endpoint:***
+
+```bash
+Method: POST
+Type: RAW
+URL: http://localhost/work-centers
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "region": "RJ 2 - Madureira - Rio de Janeiro"
+}
+```
+
+
+
+##### 8. Deletando um Polo
+
+
+
+***Endpoint:***
+
+```bash
+Method: DELETE
+Type: 
+URL: http://localhost/work-centers/1
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+##### 9. Editando um Polo
+
+
+
+***Endpoint:***
+
+```bash
+Method: PUT
+Type: RAW
+URL: http://localhost/work-centers/1
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+***Body:***
+
+```js        
+{
+    "region": "RJ 5 - Madureira - Rio de Janeiro"
+}
+```
+
+
+
+##### 10. Saber quais são  os atendimentos
+
+
+
+***Endpoint:***
+
+```bash
+Method: GET
+Type: 
+URL: http://localhost/attendance
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+##### 11. Saber quais são  as Expedições feitas
+
+
+
+***Endpoint:***
+
+```bash
+Method: GET
+Type: 
+URL: http://localhost/expeditions
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+##### 12. Saber quais são  as Expedições feitas One
+
+
+
+***Endpoint:***
+
+```bash
+Method: GET
+Type: 
+URL: http://localhost/expeditions/1
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+##### 13. Saber quais são  os Polos
+
+
+
+***Endpoint:***
+
+```bash
+Method: GET
+Type: 
+URL: http://localhost:8082/work-centers
+```
+
+
+***Headers:***
+
+| Key | Value | Description |
+| --- | ------|-------------|
+| Content-Type | application/json |  |
+
+
+
+---
+[Back to top](#stone-challenge)

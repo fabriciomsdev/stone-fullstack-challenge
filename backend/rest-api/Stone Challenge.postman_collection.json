@@ -1,0 +1,367 @@
+{
+	"info": {
+		"_postman_id": "1cb93710-1a64-480d-8fcb-6e9fdd285fb5",
+		"name": "Stone Challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create A Work Center",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"region\": \"RJ 2 - Madureira - Rio de Janeiro\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost/work-centers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"work-centers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit A Work Center",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"region\": \"RJ 5 - Madureira - Rio de Janeiro\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost/work-centers/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"work-centers",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get WorkCenters",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8082/work-centers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"work-centers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Expedition",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"work_center_id\": 1,\n    \"qty_of_terminals\": 1000\n}"
+				},
+				"url": {
+					"raw": "http://localhost/expeditions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"expeditions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Attendence",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"work_center_id\": 1,\n    \"qty_of_terminals\": 1\n}"
+				},
+				"url": {
+					"raw": "http://localhost/attendance",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"attendance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Expedition Auto Predict Terminals",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"work_center_id\": 1,\n    \"qty_of_terminals\": 1000,\n    \"auto_predict_qty_needed\": true\n}"
+				},
+				"url": {
+					"raw": "http://localhost/expeditions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"expeditions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Expedition Negative",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"work_center_id\": 3,\n    \"qty_of_terminals\": -1000\n}"
+				},
+				"url": {
+					"raw": "http://localhost/expeditions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"expeditions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Expeditions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/expeditions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"expeditions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Expeditions One",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/expeditions/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"expeditions",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Attendence",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/attendance",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"attendance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cancel A Attendence",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"work_center_id\": 1,\n    \"qty_of_terminals\": 1,\n    \"was_canceled\": true\n}"
+				},
+				"url": {
+					"raw": "http://0.0.0.0:8082/attendance/1",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8082",
+					"path": [
+						"attendance",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cancel A Expedition",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"work_center_id\": 1,\n    \"qty_of_terminals\": 1,\n    \"was_canceled\": true\n}"
+				},
+				"url": {
+					"raw": "http://0.0.0.0:8082/expeditions/1",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8082",
+					"path": [
+						"expeditions",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete WorkCenters",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/work-centers/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"work-centers",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
