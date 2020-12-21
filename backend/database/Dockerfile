@@ -2,4 +2,5 @@
 FROM mysql:latest
 
 # executed during container startup
-# COPY ./sql-scripts/ /docker-entrypoint-initdb.d/
+
+COPY ./backup/ /docker-entrypoint-initdb.d/
