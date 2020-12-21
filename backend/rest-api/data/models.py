@@ -1,6 +1,16 @@
-from domain.entities import WorkCentersEntity, ExpeditionsEntity, AttendanceEntity
+from business.domain.entities import (
+    WorkCentersEntity, 
+    ExpeditionsEntity, 
+    AttendanceEntity
+)
 from data.orm import BaseModel
-from sqlalchemy import Column, String, Integer, ForeignKey, DateTime
+from sqlalchemy import (
+    Column, 
+    String, 
+    Integer, 
+    ForeignKey, 
+    DateTime
+)
 from typing import TypeVar, Generic
 from data.abstract import AbstractModel
 from sqlalchemy.types import Boolean
@@ -35,7 +45,12 @@ class WorkCentersModel(AbstractModel[WorkCentersEntity], BaseModel, WorkCentersE
         expeditions = [ exp.to_entity() for exp in self.expeditions ]
         attendance = [ attdc.to_entity() for attdc in self.attendance ]
         
-        return WorkCentersEntity(self.region, self.id, expeditions, attendance, self.days_qty_ideal_for_coverage)
+        return WorkCentersEntity(
+            self.region, 
+            self.id, 
+            expeditions, 
+            attendance, 
+            self.days_qty_ideal_for_coverage)
 
 
 class ExpeditionsModel(AbstractModel[WorkCentersEntity], BaseModel, ExpeditionsEntity):
@@ -56,7 +71,7 @@ class ExpeditionsModel(AbstractModel[WorkCentersEntity], BaseModel, ExpeditionsE
         self.qty_of_terminals = entity.qty_of_terminals
         self.was_canceled = entity.was_canceled
         self.work_center_id = entity.work_center.id
-        self.auto_predict_qty_needed = ExpeditionsEntity.auto_predict_qty_needed
+        self.auto_predict_qty_needed = entity.auto_predict_qty_needed
 
     def to_entity(self) -> ExpeditionsEntity:
         return ExpeditionsEntity(
@@ -64,7 +79,8 @@ class ExpeditionsModel(AbstractModel[WorkCentersEntity], BaseModel, ExpeditionsE
             self.qty_of_terminals, 
             self.was_canceled, 
             self.work_center, 
-            self.auto_predict_qty_needed)
+            self.auto_predict_qty_needed
+        )
 
 
 class AttendanceModel(AbstractModel[WorkCentersEntity], BaseModel, AttendanceEntity):

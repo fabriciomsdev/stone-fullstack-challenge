@@ -1,18 +1,22 @@
 from data.repositories import WorkCentersRepository
 from data.data_source import DBDataSource
 from data.models import WorkCentersModel
-from domain.entities import WorkCentersEntity
-from domain.business_rules import WorkCenterBusinessRules
-from domain.business_messages import WorkCenterOperationsRejectionMessages, DefaultOperationsRejectionsMessages
+from business.domain.entities import WorkCentersEntity
+from business.rules import WorkCenterBusinessRules
+from business.messages import (
+    WorkCenterOperationsRejectionMessages, 
+    DefaultOperationsRejectionsMessages
+)
 from utils.exceptions import UseCaseException
 
 
 class WorkCentersUseCases():
     _work_centers_repository: WorkCentersRepository = None
     _business_rules: WorkCenterBusinessRules = None
-    _data_source = DBDataSource()
+    _data_source = None
 
-    def __init__(self):
+    def __init__(self, data_source: DBDataSource):
+        self._data_source = data_source
         self._work_centers_repository = WorkCentersRepository(
             db_data_source=self._data_source)
         self._business_rules = WorkCenterBusinessRules()   

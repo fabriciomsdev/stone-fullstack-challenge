@@ -4,29 +4,31 @@ import falcon
 from falcon import media
 import rapidjson
 
-from service.resources.work_centers import WorkCentersResource, WorkCenterResource
-from service.resources.expeditions import ExpeditionResource, ExpeditionsResource
-from service.resources.attendance import AttendanceListResource, AttendanceResource
+from application.resources.work_centers import WorkCentersResource, WorkCenterResource
+from application.resources.expeditions import ExpeditionResource, ExpeditionsResource
+from application.resources.attendance import AttendanceListResource, AttendanceResource
 from data.data_source import DBDataSource
 
 
 class WelcomeResource():
     def on_get(self, req, resp):
         resp.status = falcon.HTTP_200  # This is the default status
-        resp.body = ('Welcome to Stone Api')
+        resp.body = ('<h1> Welcome to Stone Api </h1>')
 
 
 class ApplicationBuilder():
+
     application_layer = None
     _env = None
     _is_in_tests = False
     _db_connection_for_tests = 'sqlite:///db.sqlite3'
+    _data_source = DBDataSource()
 
     def create_and_start_database(self):
         if self._is_in_tests is True:
-            DBDataSource().connect_to_source(self._db_connection_for_tests)
+            self._data_source.connect_to_source(self._db_connection_for_tests)
         else:
-            DBDataSource().connect_to_source(self._env('DATABASE_CONNECTION_STR'))
+            self._data_source.connect_to_source(self._env('DATABASE_CONNECTION_STR'))
         return self
 
     def create_application_layer_obj(self):
@@ -54,19 +56,19 @@ class ApplicationBuilder():
             "/", WelcomeResource())
 
         self.application_layer.add_route(
-            "/work-centers", WorkCentersResource())
+            "/work-centers", WorkCentersResource(self._data_source))
         self.application_layer.add_route(
-            "/work-centers/{primary_key}", WorkCenterResource())
+            "/work-centers/{primary_key}", WorkCenterResource(self._data_source))
 
         self.application_layer.add_route(
-            "/expeditions", ExpeditionsResource())
+            "/expeditions", ExpeditionsResource(self._data_source))
         self.application_layer.add_route(
-            "/expeditions/{primary_key}", ExpeditionResource())
+            "/expeditions/{primary_key}", ExpeditionResource(self._data_source))
 
         self.application_layer.add_route(
-            "/attendance", AttendanceListResource())
+            "/attendance", AttendanceListResource(self._data_source))
         self.application_layer.add_route(
-            "/attendance/{primary_key}", AttendanceResource())
+            "/attendance/{primary_key}", AttendanceResource(self._data_source))
 
         return self
 

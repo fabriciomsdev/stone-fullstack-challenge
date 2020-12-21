@@ -5,7 +5,7 @@ env:
   EB_ENVIRONMENT_NAME       : "Stonecaseprd-env"
   DEPLOY_PACKAGE_NAME       : "falcon-app-${{ github.sha }}.zip"
   AWS_REGION_NAME           : "us-east-1"
-  ENV_FILE_LOCATION         : "./backend/rest-api/service"
+  ENV_FILE_LOCATION         : "./backend/rest-api/application"
 on: 
   push:
     branches: 
@@ -19,12 +19,12 @@ jobs:
          - name: Git clone our repository
            uses: actions/checkout@v1
 
-        - name: Replace Env varibles For DB CONNECTION
-          uses: bejoistic/str-replace@master
-          with:
-            find: "DB_CONNECTION_VALUE"
-            replace: "${{ secrets.DB_CONNECTION_PRD }}"
-            include: ".env.prod"
+         - name: Replace Env varibles For DB CONNECTION
+           uses: bejoistic/str-replace@master
+           with:
+             find: "DB_CONNECTION_VALUE"
+             replace: "${{ secrets.DB_CONNECTION_PRD }}"
+             include: ".env.prod"
 
          - name: Prepare Enviroment of REST API
            run : |
@@ -33,7 +33,7 @@ jobs:
 
          - name: Prepare Docker Compose File To PROD
            run : |
-            cp -f ./docker-compose.prod.yml ./docker-compose.yml
+            cp -f ./docker-compose.prod.yml ./docker-compose.yml \
             && rm ./docker-compose.prod.yml
 
          - name: Create ZIP deployment package
