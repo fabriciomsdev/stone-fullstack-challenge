@@ -1,16 +1,16 @@
 # Data Manipulation Tests
 from data.repositories import WorkCentersRepository
-from domain.entities import AttendanceEntity, ExpeditionsEntity, WorkCentersEntity
+from business.domain.entities import AttendanceEntity, ExpeditionsEntity, WorkCentersEntity
 from tests.utils.datasource_layer import ResetDatabaseEachTestCase
 from use_cases.work_centers import WorkCentersUseCases
 from use_cases.attendance import AttendanceUseCases
+from use_cases.expeditions import ExpeditionsUseCases
+from business.rules import WorkCenterBusinessRules
+from asyncio.tasks import sleep
+from business.domain.coverage_classification import CoverageClassifications
+import time
 import datetime
 import random
-from use_cases.expeditions import ExpeditionsUseCases
-from domain.business_rules import WorkCenterBusinessRules
-from asyncio.tasks import sleep
-from domain.coverage_classification import CoverageClassifications
-import time
 
 class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
     _fake_wc_entity = WorkCentersEntity(region="SP - São Paulo")
@@ -25,7 +25,7 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
 
     def test_should_get_right_average_of_attendence(self):
         days_used_in_avg = 14
-        use_cases = WorkCentersUseCases()
+        use_cases = WorkCentersUseCases(self._data_source)
         work_center = use_cases.create(self._fake_wc_entity)
         avg_before = use_cases.get_average_of_attendences_in_wc(
             work_center, days_used_in_avg)
@@ -40,7 +40,7 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
         ]
 
         for attdc in list_of_attendences:
-            attdc = AttendanceUseCases().create(attdc)
+            attdc = AttendanceUseCases(self._data_source).create(attdc)
 
         avg_after = use_cases.get_average_of_attendences_in_wc(
             work_center, days_used_in_avg)
@@ -51,7 +51,7 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
 
     def test_is_getting_right_green_classification_of_coverage(self):
         days_used_in_avg = 14
-        use_cases = WorkCentersUseCases()
+        use_cases = WorkCentersUseCases(self._data_source)
         work_center = use_cases.create(self._fake_wc_entity)
         business_rules = WorkCenterBusinessRules()
 
@@ -77,7 +77,7 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
 
     def test_is_getting_right_red_with_low_stock_classification_of_coverage(self):
         days_used_in_avg = 14
-        use_cases = WorkCentersUseCases()
+        use_cases = WorkCentersUseCases(self._data_source)
         work_center = use_cases.create(self._fake_wc_entity)
         business_rules = WorkCenterBusinessRules()
 
@@ -106,7 +106,7 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
 
     def test_is_getting_right_red_with_high_stock_classification_of_coverage(self):
         days_used_in_avg = 14
-        use_cases = WorkCentersUseCases()
+        use_cases = WorkCentersUseCases(self._data_source)
         work_center = use_cases.create(self._fake_wc_entity)
         business_rules = WorkCenterBusinessRules()
 
@@ -135,7 +135,7 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
 
     def test_is_getting_right_yellow_with_low_stock_classification_of_coverage(self):
         days_used_in_avg = 14
-        use_cases = WorkCentersUseCases()
+        use_cases = WorkCentersUseCases(self._data_source)
         work_center = use_cases.create(self._fake_wc_entity)
         business_rules = WorkCenterBusinessRules()
 
@@ -166,7 +166,7 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
 
     def test_is_getting_right_yellow_with_high_stock_classification_of_coverage(self):
         days_used_in_avg = 14
-        use_cases = WorkCentersUseCases()
+        use_cases = WorkCentersUseCases(self._data_source)
         work_center = use_cases.create(self._fake_wc_entity)
         business_rules = WorkCenterBusinessRules()
 
@@ -195,10 +195,10 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
         self.assertEqual(classfication, CoverageClassifications.YELLOW)
 
     def test_is_getting_right_qty_of_terminals_in_send_auto_predict_expeditions(self):
-        use_cases = WorkCentersUseCases()
+        use_cases = WorkCentersUseCases(self._data_source)
         work_center = use_cases.create(self._fake_wc_entity)
         business_rules = WorkCenterBusinessRules()
-        expedition_use_case = ExpeditionsUseCases()
+        expedition_use_case = ExpeditionsUseCases(self._data_source)
 
         self._register_fake_attendences_in(work_center, 75, work_center.days_qty_ideal_for_coverage)
         self._register_fake_expeditions_in(work_center, 9, 10)
@@ -234,8 +234,8 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
 
 
     def _register_fake_attendences_in(self, work_center: WorkCentersEntity, qty_of_attendence: int = 5, days_limit: int = 14):
-        while len(AttendanceUseCases().get_all()) < qty_of_attendence:
-            AttendanceUseCases().create(AttendanceEntity(
+        while len(AttendanceUseCases(self._data_source).get_all()) < qty_of_attendence:
+            AttendanceUseCases(self._data_source).create(AttendanceEntity(
                 qty_of_terminals=1,
                 work_center=work_center,
                 attendance_date=self._get_date_days_ago(int(days_limit) / 2),
@@ -243,8 +243,8 @@ class WorkCenterBusinessCoverage(ResetDatabaseEachTestCase):
 
 
     def _register_fake_expeditions_in(self, work_center: WorkCentersEntity, qty_of_expeditions: int = 1, qty_of_terminals_per_expedition: int = 100):
-        while len(ExpeditionsUseCases().get_all()) < qty_of_expeditions:
-            ExpeditionsUseCases().create(ExpeditionsEntity(
+        while len(ExpeditionsUseCases(self._data_source).get_all()) < qty_of_expeditions:
+            ExpeditionsUseCases(self._data_source).create(ExpeditionsEntity(
                 qty_of_terminals=qty_of_terminals_per_expedition,
                 work_center=work_center
             ))

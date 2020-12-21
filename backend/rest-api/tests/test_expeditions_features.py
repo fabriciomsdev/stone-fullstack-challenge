@@ -1,16 +1,16 @@
 import falcon
 from falcon import testing
 from tests.utils.datasource_layer import ResetDatabaseEachTestCase
-from domain.entities import ExpeditionsEntity, WorkCentersEntity
+from business.domain.entities import ExpeditionsEntity, WorkCentersEntity
 from data.repositories import ExpeditionsRepository, WorkCentersRepository
 from use_cases.expeditions import ExpeditionsUseCases
 from utils.exceptions import UseCaseException
-from domain.business_messages import ExpeditionOperationsRejectionMessages
+from business.messages import ExpeditionOperationsRejectionMessages
 from tests.utils.application_layer import ResourcesTestCase, ResetAllApplicationEachTestCase
 from tests.utils.datasource_layer import ResetDatabaseEachTestCase
 from tests.mixins import TestWithWorkCenterCreationMixin
 import json
-from domain.coverage_classification import CoverageClassifications
+from business.domain.coverage_classification import CoverageClassifications
 
 
 class ExpeditionDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreationMixin):
@@ -55,7 +55,7 @@ class ExpeditionUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
         qty_of_register_in_db_before = len(repository.fetch())
         work_center = self._create_a_work_center_by_data_layer()
 
-        created_entity = ExpeditionsUseCases().create(ExpeditionsEntity(
+        created_entity = ExpeditionsUseCases(self._data_source).create(ExpeditionsEntity(
             qty_of_terminals=100,
             work_center=work_center
         ))
@@ -70,7 +70,7 @@ class ExpeditionUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
 
     def test_can_not_create_a_expedition_without_work_center(self):
         with self.assertRaises(UseCaseException):
-            use_case = ExpeditionsUseCases()
+            use_case = ExpeditionsUseCases(self._data_source)
             wrong_data = ExpeditionsEntity(
                 qty_of_terminals=100
             )
@@ -81,7 +81,7 @@ class ExpeditionUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
         work_center_model = self._create_a_work_center_by_data_layer()
 
         with self.assertRaises(UseCaseException):
-            use_case = ExpeditionsUseCases()
+            use_case = ExpeditionsUseCases(self._data_source)
             wrong_data = ExpeditionsEntity(
                 work_center=work_center_model,
                 qty_of_terminals = None
@@ -89,7 +89,7 @@ class ExpeditionUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
             use_case.create(wrong_data)
 
         with self.assertRaises(UseCaseException):
-            use_case = ExpeditionsUseCases()
+            use_case = ExpeditionsUseCases(self._data_source)
             wrong_data = ExpeditionsEntity(
                 work_center=work_center_model,
                 qty_of_terminals=0
@@ -99,7 +99,7 @@ class ExpeditionUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
 
     def test_should_cancel_a_expedition(self):
         work_center = self._create_a_work_center_by_data_layer()
-        use_cases = ExpeditionsUseCases()
+        use_cases = ExpeditionsUseCases(self._data_source)
 
         expedition = use_cases.create(ExpeditionsEntity(
             qty_of_terminals=500,
@@ -209,8 +209,8 @@ class ExpeditionApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         expedition_content_updated = response_get_expedition.json
         work_center_content_updated = response_get_work_center_updated.json
 
-        work_center_content_updated = json.loads(work_center_content_updated)
-        expedition_content_updated = json.loads(expedition_content_updated)
+        work_center_content_updated = work_center_content_updated
+        expedition_content_updated = expedition_content_updated
         
         self.assertEqual(response_update.status, falcon.HTTP_200)
 
