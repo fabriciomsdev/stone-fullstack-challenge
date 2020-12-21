@@ -21,7 +21,7 @@ class ApplicationBuilder():
     application_layer = None
     _env = None
     _is_in_tests = False
-    _db_connection_for_tests = 'sqlite:///db.sqlite3'
+    _db_connection_for_tests = 'sqlite:///db.sqliteTests'
     _data_source = DBDataSource()
 
     def create_and_start_database(self):
