@@ -1,17 +1,18 @@
 from data.repositories import ExpeditionsRepository, WorkCentersRepository
 from data.data_source import DBDataSource
-from domain.entities import ExpeditionsEntity, WorkCentersEntity
-from domain.business_rules import WorkCenterBusinessRules
-from domain.business_messages import ExpeditionOperationsRejectionMessages, DefaultOperationsRejectionsMessages
+from business.domain.entities import ExpeditionsEntity, WorkCentersEntity
+from business.rules import WorkCenterBusinessRules
+from business.messages import ExpeditionOperationsRejectionMessages, DefaultOperationsRejectionsMessages
 from utils.exceptions import UseCaseException
 
 
 class ExpeditionsUseCases():
     _expeditions_repository = None
     _business_rules = None
-    _data_source = DBDataSource()
+    _data_source = None
 
-    def __init__(self):
+    def __init__(self, data_source: DBDataSource):
+        self._data_source = data_source
         self._expeditions_repository: ExpeditionsRepository = ExpeditionsRepository(
             db_data_source=self._data_source)
         self._work_center_repository: WorkCentersRepository = WorkCentersRepository(

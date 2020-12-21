@@ -42,5 +42,9 @@ class DBDataSource(DataSource, metaclass=Singleton):
         self._truncate_database(**args)
 
     def create_a_session(self, autoflush=True, autocommit=False, expire_on_commit=False):
-        Session = sessionmaker(bind=self.data_base_engine, autoflush=autoflush, autocommit=autocommit, expire_on_commit=expire_on_commit)
+        Session = sessionmaker(
+            bind=self.data_base_engine, 
+            autoflush=autoflush, 
+            autocommit=autocommit, 
+            expire_on_commit=expire_on_commit)
         return Session()

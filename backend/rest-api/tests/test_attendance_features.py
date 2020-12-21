@@ -1,11 +1,11 @@
 import falcon
 from falcon import testing
 from tests.utils.datasource_layer import ResetDatabaseEachTestCase
-from domain.entities import AttendanceEntity, WorkCentersEntity
+from business.domain.entities import AttendanceEntity, WorkCentersEntity
 from data.repositories import AttendanceRepository, WorkCentersRepository
 from use_cases.attendance import AttendanceUseCases
 from utils.exceptions import UseCaseException
-from domain.business_messages import AttendanceOperationsRejectionMessages
+from business.messages import AttendanceOperationsRejectionMessages
 from tests.utils.application_layer import ResourcesTestCase, ResetAllApplicationEachTestCase
 from tests.utils.datasource_layer import ResetDatabaseEachTestCase
 from tests.mixins import TestWithWorkCenterCreationMixin
@@ -57,7 +57,7 @@ class AttendanceUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
         qty_of_register_in_db_before = len(repository.fetch())
         work_center = self._create_a_work_center_by_data_layer()
 
-        created_entity = AttendanceUseCases().create(AttendanceEntity(
+        created_entity = AttendanceUseCases(self._data_source).create(AttendanceEntity(
             qty_of_terminals=1,
             work_center=work_center
         ))
@@ -72,7 +72,7 @@ class AttendanceUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
 
     def test_can_not_create_a_attendance_without_work_center(self):
         with self.assertRaises(UseCaseException):
-            use_case = AttendanceUseCases()
+            use_case = AttendanceUseCases(self._data_source)
             wrong_data = AttendanceEntity(
                 qty_of_terminals=1
             )
@@ -83,7 +83,7 @@ class AttendanceUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
         work_center_model = self._create_a_work_center_by_data_layer()
 
         with self.assertRaises(UseCaseException):
-            use_case = AttendanceUseCases()
+            use_case = AttendanceUseCases(self._data_source)
             wrong_data = AttendanceEntity(
                 work_center=work_center_model,
                 qty_of_terminals = None
@@ -91,7 +91,7 @@ class AttendanceUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
             use_case.create(wrong_data)
 
         with self.assertRaises(UseCaseException):
-            use_case = AttendanceUseCases()
+            use_case = AttendanceUseCases(self._data_source)
             wrong_data = AttendanceEntity(
                 work_center=work_center_model,
                 qty_of_terminals=0
@@ -101,7 +101,7 @@ class AttendanceUseCaseTest(ResetDatabaseEachTestCase, TestWithWorkCenterCreatio
 
     def test_should_cancel_a_attendance(self):
         work_center = self._create_a_work_center_by_data_layer()
-        use_cases = AttendanceUseCases()
+        use_cases = AttendanceUseCases(self._data_source)
 
         attendance = use_cases.create(AttendanceEntity(
             qty_of_terminals=1,
@@ -199,7 +199,7 @@ class AttendanceApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         })
 
         work_center_content_updated = json.loads(response_get_work_center_updated.content)
-        attendence_on_wc = json.loads(work_center_content_updated).get("attendance")
+        attendence_on_wc = work_center_content_updated.get("attendance")
         last_attendence_on_wc = attendence_on_wc[0]
 
         self.assertEqual(response_update.status, falcon.HTTP_200)

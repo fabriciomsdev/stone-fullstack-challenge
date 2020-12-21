@@ -2,6 +2,23 @@ from utils.json import ComplexObjectToJsonEntityMixin
 from datetime import datetime
 
 class WorkCentersEntity(ComplexObjectToJsonEntityMixin):
+    """
+    Polos para distribuição de terminais para os Green Angels
+
+    Attributes:
+        ComplexObjectToJsonEntityMixin ([type]): [description]
+        id (int) ID
+        region (str) Região Ex: SP-São Paulo
+        expeditions (list) Lista de Expedições realizados para esse polo
+        attendance (list) Lista de Atendimentos realizados nesse polo
+        coverage_classification (str) Nível de cobertura
+        days_of_coverage (int) Dias de cobertura
+        avg_of_attendence (int) Média de atendimento
+        qty_of_terminals_available (int) Quantidade de terminais disponíveis
+        qty_of_terminals_used (int) Quantidade de terminais usados
+        qty_of_terminals_received (int) Quantitdade de terminais recebidos
+    """
+
     id: int = None
     region: str = ''
     expeditions: list = []
@@ -28,6 +45,11 @@ class WorkCentersEntity(ComplexObjectToJsonEntityMixin):
 
 
     def calcule_qty_of_terminals_received(self) -> int:
+        """
+        Cálculo da quantidade de terminais recebidos durante as expedições
+        Returns:
+            int: Quantidade de terminais recebidos durante as expedições
+        """
         terminals_delivered_list = [ 
             exp.qty_of_terminals for exp in self.expeditions if exp.was_canceled == False
         ]
@@ -77,7 +99,7 @@ class ExpeditionsEntity(ComplexObjectToJsonEntityMixin):
         was_canceled: bool = False, 
         work_center: WorkCentersEntity = None, 
         auto_predict_qty_needed: bool = False):
-
+        
         self.qty_of_terminals = qty_of_terminals
         self.was_canceled = was_canceled
         self.auto_predict_qty_needed = auto_predict_qty_needed
@@ -93,11 +115,14 @@ class AttendanceEntity(ComplexObjectToJsonEntityMixin):
     work_center: WorkCentersEntity = None
     attendance_date: datetime = datetime.now()
 
-    def __init__(self, id: int = None, qty_of_terminals: int = 1, was_canceled: bool = False, work_center: WorkCentersEntity = None, attendance_date: datetime = None):
+    def __init__(self, id: int = None, 
+        qty_of_terminals: int = 1, was_canceled: bool = False, 
+        work_center: WorkCentersEntity = None, attendance_date: datetime = None):
         self.id = id
         self.fill(qty_of_terminals, was_canceled, work_center, attendance_date)
 
-    def fill(self, qty_of_terminals: str = None, was_canceled: bool = False, work_center: WorkCentersEntity = None, attendance_date: datetime = None):
+    def fill(self, qty_of_terminals: str = None, was_canceled: bool = False, 
+        work_center: WorkCentersEntity = None, attendance_date: datetime = None):
         self.qty_of_terminals = qty_of_terminals
         self.was_canceled = was_canceled
 

@@ -1,5 +1,5 @@
 from data.repositories import WorkCentersRepository
-from domain.entities import WorkCentersEntity
+from business.domain.entities import WorkCentersEntity
 import json
 
 class TestWithWorkCenterCreationMixin():

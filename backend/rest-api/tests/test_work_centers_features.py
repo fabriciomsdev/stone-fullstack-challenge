@@ -7,10 +7,10 @@ from tests.utils.application_layer import ResourcesTestCase, ResetAllApplication
 from tests.utils.datasource_layer import ResetDatabaseEachTestCase
 
 from use_cases.work_centers import WorkCentersUseCases
-from domain.entities import WorkCentersEntity
+from business.domain.entities import WorkCentersEntity
 from data.repositories import WorkCentersRepository
-from domain.business_rules import WorkCenterBusinessRules
-from domain.coverage_classification import CoverageClassifications
+from business.rules import WorkCenterBusinessRules
+from business.domain.coverage_classification import CoverageClassifications
 
 
 # Data Manipulation Tests
@@ -109,7 +109,7 @@ class WorkCenterUseCasesTest(ResetDatabaseEachTestCase):
         repository = WorkCentersRepository(self._data_source)
         qty_of_register_in_db_before = len(repository.fetch())
 
-        created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
+        created_entity = WorkCentersUseCases(self._data_source).create(WorkCentersEntity(region = "SP - São Paulo"))
 
         qty_of_register_in_db_after = len(repository.fetch())
 
@@ -118,34 +118,34 @@ class WorkCenterUseCasesTest(ResetDatabaseEachTestCase):
         self.assertEqual(qty_of_register_in_db_after, qty_of_register_in_db_before + 1)
 
     def test_should_get_all_work_centers(self):
-        WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
-        WorkCentersUseCases().create(WorkCentersEntity(region = "RJ - Rio de Janeiro"))
-        WorkCentersUseCases().create(WorkCentersEntity(region = "BH - Belo Horizonte"))
+        WorkCentersUseCases(self._data_source).create(WorkCentersEntity(region = "SP - São Paulo"))
+        WorkCentersUseCases(self._data_source).create(WorkCentersEntity(region = "RJ - Rio de Janeiro"))
+        WorkCentersUseCases(self._data_source).create(WorkCentersEntity(region = "BH - Belo Horizonte"))
         
-        work_centers = WorkCentersUseCases().get_all()
+        work_centers = WorkCentersUseCases(self._data_source).get_all()
         self.assertEqual(len(work_centers), 3)
 
     def test_should_find_a_work_center(self):
-        created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
-        found_entity = WorkCentersUseCases().find(created_entity.id)
+        created_entity = WorkCentersUseCases(self._data_source).create(WorkCentersEntity(region = "SP - São Paulo"))
+        found_entity = WorkCentersUseCases(self._data_source).find(created_entity.id)
 
         self.assertEqual(found_entity.id, created_entity.id)
 
     def test_should_delete_a_work_center(self):
-        created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
-        WorkCentersUseCases().delete(created_entity)
-        found_entity = WorkCentersUseCases().find(created_entity.id)
+        created_entity = WorkCentersUseCases(self._data_source).create(WorkCentersEntity(region = "SP - São Paulo"))
+        WorkCentersUseCases(self._data_source).delete(created_entity)
+        found_entity = WorkCentersUseCases(self._data_source).find(created_entity.id)
 
         self.assertIsNone(found_entity)
 
     def test_should_update_a_work_center(self):
         new_region = "RJ - Rio de Janeiro - Madureira"
-        created_entity = WorkCentersUseCases().create(WorkCentersEntity(region = "SP - São Paulo"))
+        created_entity = WorkCentersUseCases(self._data_source).create(WorkCentersEntity(region = "SP - São Paulo"))
         
         created_entity.region = new_region
-        WorkCentersUseCases().update(created_entity)
+        WorkCentersUseCases(self._data_source).update(created_entity)
 
-        found_entity = WorkCentersUseCases().find(created_entity.id)
+        found_entity = WorkCentersUseCases(self._data_source).find(created_entity.id)
 
         self.assertEqual(found_entity.region, new_region)
 
@@ -224,11 +224,9 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
         response = self.simulate_get('/work-centers', headers = {
             'content-type': 'application/json'
         })
-        
-        response_data = [json.loads(item) for item in json.loads(response.content)]
 
         self.assertEqual(response.status, falcon.HTTP_OK)
-        self.assertListEqual(response_data, expected_data)
+        self.assertListEqual(json.loads(response.content), expected_data)
 
 
     def test_should_get_one_work_center_data(self):
@@ -251,7 +249,7 @@ class WorkCenterApplicationLayerTest(ResetAllApplicationEachTestCase):
 
         response = self.simulate_get('/work-centers/1')
         
-        received_data = json.loads(json.loads(response.content))
+        received_data = response.json
 
         self.assertEqual(response.status, falcon.HTTP_200)
         self.assertEqual(received_data, expected_data)
