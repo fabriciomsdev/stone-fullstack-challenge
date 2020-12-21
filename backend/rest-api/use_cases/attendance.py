@@ -1,16 +1,17 @@
 from data.repositories import AttendanceRepository
 from data.data_source import DBDataSource
-from domain.entities import AttendanceEntity
-from domain.business_rules import WorkCenterBusinessRules
-from domain.business_messages import AttendanceOperationsRejectionMessages, DefaultOperationsRejectionsMessages
+from business.domain.entities import AttendanceEntity
+from business.rules import WorkCenterBusinessRules
+from business.messages import AttendanceOperationsRejectionMessages, DefaultOperationsRejectionsMessages
 from utils.exceptions import UseCaseException
 
 
 class AttendanceUseCases():
     _attendance_repository = None
-    _data_source = DBDataSource()
+    _data_source = None
 
-    def __init__(self):
+    def __init__(self, data_source: DBDataSource):
+        self._data_source = data_source
         self._attendance_repository = AttendanceRepository(db_data_source = self._data_source)
 
     def create(self, attendance: AttendanceEntity = AttendanceEntity()) -> AttendanceEntity:

@@ -26,4 +26,4 @@ EXPOSE 5000
 
 RUN #!/bin/bash echo "app starting"
 
-CMD [ "sudo", "gunicorn", "-b 0.0.0.0:5000", "service.start:app"]
+CMD [ "sudo", "gunicorn", "-b 0.0.0.0:5000", "application.start:app"]

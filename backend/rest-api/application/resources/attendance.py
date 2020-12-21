@@ -2,17 +2,29 @@ import falcon
 from falcon import Request, Response
 from use_cases.work_centers import WorkCentersUseCases
 from use_cases.attendance import AttendanceUseCases
-from service.hooks import verify_if_is_a_valid_work_center_to_register
-from domain.entities import AttendanceEntity
-from service.utils.json import serialize, serialize_list
-from service.resources.work_centers import WorkCenterResource
-from domain.business_messages import AttendanceOperationsRejectionMessages
+from application.hooks import verify_if_is_a_valid_work_center_to_register
+from business.domain.entities import AttendanceEntity
+from application.utils.json import serialize, prepare_list_to_json
+from application.resources.work_centers import WorkCenterResource
+from business.messages import AttendanceOperationsRejectionMessages
 from utils.exceptions import UseCaseException, ApplicationLayerException
-import json
 from utils.parses import parse_date_time_str_to_datetime
+from data.data_source import DBDataSource
 import datetime
+import json
+
 
 class AttendenceResourceMixin():
+    _data_source = None
+    _resource_use_cases = None
+    _work_centers_use_case = None
+
+    def __init__(self, data_source: DBDataSource):
+        self._data_source = data_source
+        self._resource_use_cases = AttendanceUseCases(self._data_source)
+        self._work_centers_use_case = WorkCentersUseCases(self._data_source)
+
+
     def _try_to_convert_date_json_to_datetime(self, date_in_json) -> datetime:
         if date_in_json is None:
             return None
@@ -35,7 +47,7 @@ class AttendanceListResource(AttendenceResourceMixin):
             work_center_id = attendance_data.get('work_center_id')
 
             if work_center_id != None:
-                destiny_of_attendance = WorkCentersUseCases().find(work_center_id)
+                destiny_of_attendance = self._work_centers_use_case.find(work_center_id)
             
             if destiny_of_attendance == None:
                 falcon.HTTPError(
@@ -49,7 +61,7 @@ class AttendanceListResource(AttendenceResourceMixin):
                     attendance_data.get('attendance_date'))
             )
 
-            result = AttendanceUseCases().create(attendance)
+            result = self._resource_use_cases.create(attendance)
         except UseCaseException as ex:
             raise falcon.HTTPBadRequest(falcon.HTTP_400, str(ex))
         except Exception as ex:
@@ -61,7 +73,7 @@ class AttendanceListResource(AttendenceResourceMixin):
 
     def on_get(self, req: Request, resp: Response):
         try:
-            resp.media = serialize_list(AttendanceUseCases().get_all())
+            resp.media = prepare_list_to_json(self._resource_use_cases.get_all())
             resp.content_type = falcon.MEDIA_JSON
             resp.status = falcon.HTTP_OK
         except Exception as ex:
@@ -70,29 +82,29 @@ class AttendanceListResource(AttendenceResourceMixin):
 
 class AttendanceResource(AttendenceResourceMixin):
     def on_get(self, req: Request, resp: Response, primary_key: int):
-        found_entity = AttendanceUseCases().find(primary_key=primary_key)
+        found_entity = self._resource_use_cases.find(primary_key=primary_key)
 
         if found_entity == None:
             raise falcon.HTTPNotFound()
 
-        resp.media = serialize(found_entity.to_dict())
+        resp.media = found_entity.to_dict()
         resp.content_type = falcon.MEDIA_JSON
         resp.status = falcon.HTTP_OK
 
     def on_delete(self, req: Request, resp: Response, primary_key: int):
-        found_entity = AttendanceUseCases().find(primary_key=primary_key)
+        found_entity = self._resource_use_cases.find(primary_key=primary_key)
 
         if found_entity == None:
             raise falcon.HTTPNotFound()
 
         try:
-            resp.body = json.dumps(AttendanceUseCases().delete(found_entity))
+            resp.body = json.dumps(self._resource_use_cases.delete(found_entity))
             resp.status = falcon.HTTP_OK
         except Exception as ex:
             raise falcon.HTTPError(falcon.HTTP_500, str(ex))
 
     def on_put(self, req: Request, resp: Response, primary_key: int):
-        found_entity = AttendanceUseCases().find(primary_key=primary_key)
+        found_entity = self._resource_use_cases.find(primary_key=primary_key)
         if found_entity == None:
             raise falcon.HTTPNotFound()
 
@@ -104,9 +116,10 @@ class AttendanceResource(AttendenceResourceMixin):
                     req.media.get('attendance_date'))
             )
 
-            attendance_updated = AttendanceUseCases().update(found_entity)
+            attendance_updated = self._resource_use_cases.update(found_entity)
             
-            resp.body = serialize(attendance_updated.to_dict())
+            resp.media = attendance_updated.to_dict()
+            resp.content_type = falcon.MEDIA_JSON
             resp.status = falcon.HTTP_OK
         except UseCaseException as ex:
             raise falcon.HTTPBadRequest(falcon.HTTP_400, str(ex))
