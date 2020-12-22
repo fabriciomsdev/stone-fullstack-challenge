@@ -27,10 +27,27 @@ class WorkCentersResource(object):
 
         resp.status = falcon.HTTP_CREATED
         resp.body = serialize(result)
+        
+
+    def _prepare_to_parse(self, work_centers: list):
+        return [
+            self._remove_big_attributes(work_center) for work_center in work_centers
+        ]
+
+
+    def _remove_big_attributes(self, work_center: WorkCentersEntity):
+        work_center.attendance = []
+        work_center.expeditions = []
+
+        return work_center
+
 
     def on_get(self, req: Request, resp: Response):
         try:
-            resp.media = prepare_list_to_json(self._resource_use_cases.get_all())
+            all_work_centers = self._resource_use_cases.get_all()
+            all_work_centers = self._prepare_to_parse(all_work_centers)
+            
+            resp.media = prepare_list_to_json(all_work_centers)
             resp.content_type = falcon.MEDIA_JSON
             resp.status = falcon.HTTP_OK
         except Exception as ex:
@@ -79,6 +96,7 @@ class WorkCenterResource(object):
             resp.content_type = falcon.MEDIA_JSON
             resp.status = falcon.HTTP_OK
         except Exception as ex:
+            print(ex)
             raise falcon.HTTPError(falcon.HTTP_500, str(ex))
         
         

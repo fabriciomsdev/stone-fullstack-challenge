@@ -22,7 +22,7 @@ class ExpeditionsResource(object):
         self._work_centers_use_case = WorkCentersUseCases(self._data_source)
 
     def on_post(self, req: Request, resp: Response):
-        result = {}
+        expedition = {}
         try:
             expedition_data = req.media
             destiny_of_expedition = None
@@ -43,7 +43,10 @@ class ExpeditionsResource(object):
                 auto_predict_qty_needed=expedition_data.get('auto_predict_qty_needed'),
             )
 
-            result = self._resource_use_cases.create(expedition)
+            expedition = self._resource_use_cases.create(expedition)
+            self._work_centers_use_case.update_calculated_values(destiny_of_expedition)
+            expedition_updated = self._resource_use_cases.find(expedition.id)
+
         except UseCaseException as ex:
             raise falcon.HTTPBadRequest(falcon.HTTP_400, str(ex))
         except Exception as ex:
@@ -51,7 +54,7 @@ class ExpeditionsResource(object):
 
         resp.status = falcon.HTTP_CREATED
         resp.body = falcon.media.JSONHandler().serialize(
-            result.to_dict(), falcon.MEDIA_JSON)
+            expedition_updated.to_dict(), falcon.MEDIA_JSON)
 
     def on_get(self, req: Request, resp: Response):
         try:
@@ -64,10 +67,12 @@ class ExpeditionsResource(object):
 class ExpeditionResource(object):
     _data_source = None
     _resource_use_cases = None
+    _work_centers_use_case = None
 
     def __init__(self, data_source: DBDataSource):
         self._data_source = data_source
         self._resource_use_cases = ExpeditionsUseCases(self._data_source)
+        self._work_centers_use_case = WorkCentersUseCases(self._data_source)
 
     def on_get(self, req: Request, resp: Response, primary_key: int):
         found_entity = self._resource_use_cases.find(primary_key=primary_key)
@@ -102,8 +107,10 @@ class ExpeditionResource(object):
                 was_canceled=req.media.get('was_canceled')
             )
 
-            expedition_updated = self._resource_use_cases.update(found_entity)
-            
+            expedition = self._resource_use_cases.update(found_entity)
+            self._work_centers_use_case.update_calculated_values(expedition.work_center)
+            expedition_updated = self._resource_use_cases.find(expedition.id)
+
             resp.media = expedition_updated.to_dict()
             resp.content_type = falcon.MEDIA_JSON
             resp.status = falcon.HTTP_OK

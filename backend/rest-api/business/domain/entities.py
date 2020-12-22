@@ -1,5 +1,6 @@
 from utils.json import ComplexObjectToJsonEntityMixin
 from datetime import datetime
+from business.domain.coverage_classification import CoverageClassifications
 
 class WorkCentersEntity(ComplexObjectToJsonEntityMixin):
     """
@@ -23,7 +24,7 @@ class WorkCentersEntity(ComplexObjectToJsonEntityMixin):
     region: str = ''
     expeditions: list = []
     attendance: list = []
-    coverage_classification: str = None
+    coverage_classification: str = CoverageClassifications.RED
     days_of_coverage: int = 0
     avg_of_attendence: int = 0
     days_qty_ideal_for_coverage: int = 0
@@ -31,17 +32,49 @@ class WorkCentersEntity(ComplexObjectToJsonEntityMixin):
     qty_of_terminals_used: int = 0
     qty_of_terminals_received: int = 0
 
-    def __init__(self, region: str = None, id: int = None, expeditions: list = [], attendance: list = [], days_qty_ideal_for_coverage: int = 14):
+    def __init__(self, region: str = None, id: int = None, 
+            expeditions: list = [], attendance: list = [], 
+            days_qty_ideal_for_coverage: int = 14,
+            coverage_classification: str = None,
+            days_of_coverage: int = 0,
+            avg_of_attendence: int = 0,
+            qty_of_terminals_available: int = 0,
+            qty_of_terminals_used: int = 0,
+            qty_of_terminals_received: int = 0):
         self.id = id
-        self.fill(region, expeditions, attendance, days_qty_ideal_for_coverage)
+        self.fill(region, expeditions, attendance,
+                days_qty_ideal_for_coverage, 
+                coverage_classification,
+                days_of_coverage,
+                avg_of_attendence,
+                qty_of_terminals_available,
+                qty_of_terminals_used,
+                qty_of_terminals_received)
+                
 
-    def fill(self, region: str = None, expeditions: list = [], attendance: list = [], days_qty_ideal_for_coverage: int = 14):
+    def fill(self, region: str = None, 
+            expeditions: list = [], attendance: list = [], 
+            days_qty_ideal_for_coverage: int = 14, 
+            coverage_classification: str = None,
+            days_of_coverage: int = 0,
+            avg_of_attendence: int = 0,
+            qty_of_terminals_available: int = 0,
+            qty_of_terminals_used: int = 0,
+            qty_of_terminals_received: int = 0):
         self.region = region
         self.expeditions = expeditions
         self.attendance = attendance
+        self.days_of_coverage = days_of_coverage
+        self.avg_of_attendence = avg_of_attendence
+        self.qty_of_terminals_available = qty_of_terminals_available
+        self.qty_of_terminals_used = qty_of_terminals_used
+        self.qty_of_terminals_received = qty_of_terminals_received
 
         if days_qty_ideal_for_coverage is not None or days_qty_ideal_for_coverage != 0:
             self.days_qty_ideal_for_coverage = days_qty_ideal_for_coverage
+
+        if coverage_classification is not None:
+            self.coverage_classification = coverage_classification
 
 
     def calcule_qty_of_terminals_received(self) -> int:
@@ -53,16 +86,21 @@ class WorkCentersEntity(ComplexObjectToJsonEntityMixin):
         terminals_delivered_list = [ 
             exp.qty_of_terminals for exp in self.expeditions if exp.was_canceled == False
         ]
+        
         self.qty_of_terminals_received = sum(terminals_delivered_list)
+
         return self.qty_of_terminals_received
 
+
     def calcule_qty_of_terminals_used(self) -> int:
-        terminals_delivered_list = [
+        terminals_used_list = [
             attdc.qty_of_terminals for attdc in self.attendance if attdc.was_canceled == False
         ]
-        self.qty_of_terminals_used = sum(terminals_delivered_list)
+        
+        self.qty_of_terminals_used = sum(terminals_used_list)
 
         return self.qty_of_terminals_used
+
 
     def calcule_qty_of_terminals_available(self) -> int:
         if self.qty_of_terminals_used == 0:

@@ -44,9 +44,6 @@ class AttendanceDataAccessTest(ResetDatabaseEachTestCase, TestWithWorkCenterCrea
         second_attendance = repository.persist(second_attendance)
         repository.save_transaction()
 
-        qty_used_after_cancel_one = work_center_model.calcule_qty_of_terminals_used()
-
-        self.assertEqual(qty_used_after_cancel_one, 1)
         self.assertTrue(second_attendance.was_canceled)
 
 
@@ -152,27 +149,6 @@ class AttendanceApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         self.assertEqual(response.status, falcon.HTTP_CREATED)
 
     def test_should_cancel_a_attendance(self):
-        expected_attendance_data = {
-            "id": 1, 
-            "qty_of_terminals": 1, 
-            "was_canceled": True,
-            "work_center": { 
-                "id": 1,
-                "region": "RJ - Rio de Janeiro",
-            }
-        }
-        expected_work_center_data = {
-            "id": 1, 
-            "region": "RJ - Rio de Janeiro", 
-            "attendance": [
-                { 
-                    "work_center_id": 1,
-                    "qty_of_terminals": 1, 
-                    "was_canceled": True,
-                    "id": 1,
-                }
-            ]
-        }
         work_center_json = self._create_a_work_center_by_application_layer()
         attendance_data = {
             'work_center_id': work_center_json['id'],
@@ -201,7 +177,7 @@ class AttendanceApplicationLayerTest(ResetAllApplicationEachTestCase, TestWithWo
         work_center_content_updated = json.loads(response_get_work_center_updated.content)
         attendence_on_wc = work_center_content_updated.get("attendance")
         last_attendence_on_wc = attendence_on_wc[0]
-
+        
         self.assertEqual(response_update.status, falcon.HTTP_200)
         self.assertEqual(last_attendence_on_wc.get("was_canceled"), True)
         self.assertEqual(len(attendence_on_wc), 1)
