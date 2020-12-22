@@ -18,12 +18,6 @@ class Sidebar extends Component {
                 <p>Gerenciar Polos</p>
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to='/profile'>
-                <i className="nc-icon nc-circle-09"></i>
-                <p>Meu Perfil</p>
-              </NavLink>
-            </li>
 
           </ul>
         </div>

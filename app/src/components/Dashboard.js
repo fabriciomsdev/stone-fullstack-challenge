@@ -10,7 +10,7 @@ class Dashboard extends Component {
       work_centers: [
           {
               "attendance": [],
-              "avg_of_attendence": 0,
+              "avg_of_attendence": 30,
               "coverage_classification": "Verde",
               "days_of_coverage": 0,
               "days_qty_ideal_for_coverage": 14,
@@ -35,14 +35,14 @@ class Dashboard extends Component {
                   }
               ],
               "id": 1,
-              "qty_of_terminals_available": 3000,
+              "qty_of_terminals_available": 2970,
               "qty_of_terminals_received": 3000,
-              "qty_of_terminals_used": 0,
-              "region": "NY 2 - New York"
+              "qty_of_terminals_used": 30,
+              "region": "SP - São Paulo"
           },
           {
               "attendance": [],
-              "avg_of_attendence": 0,
+              "avg_of_attendence": 30,
               "coverage_classification": "Vermelha",
               "days_of_coverage": 0,
               "days_qty_ideal_for_coverage": 14,
@@ -55,7 +55,7 @@ class Dashboard extends Component {
           },
           {
               "attendance": [],
-              "avg_of_attendence": 0,
+              "avg_of_attendence": 30,
               "coverage_classification": "Vermelha",
               "days_of_coverage": 0,
               "days_qty_ideal_for_coverage": 14,
@@ -64,11 +64,11 @@ class Dashboard extends Component {
               "qty_of_terminals_available": 0,
               "qty_of_terminals_received": 0,
               "qty_of_terminals_used": 0,
-              "region": "NY 2 - New York"
+              "region": "NY 3 - New York"
           },
           {
               "attendance": [],
-              "avg_of_attendence": 0,
+              "avg_of_attendence": 30,
               "coverage_classification": "Vermelha",
               "days_of_coverage": 0,
               "days_qty_ideal_for_coverage": 14,
@@ -77,7 +77,7 @@ class Dashboard extends Component {
               "qty_of_terminals_available": 0,
               "qty_of_terminals_received": 0,
               "qty_of_terminals_used": 0,
-              "region": "NY 2 - New York"
+              "region": "NY 4 - New York"
           }
       ],
       expeditions: [

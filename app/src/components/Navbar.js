@@ -11,7 +11,7 @@ class Navbar extends Component {
             <ul className="navbar-nav ml-auto">
               <li className="nav-item">
                 <Link className="nav-link" to='/'>
-                  <span className="no-icon">Log out</span>
+                  <span className="no-icon">Sair</span>
                 </Link>
               </li>
             </ul>
