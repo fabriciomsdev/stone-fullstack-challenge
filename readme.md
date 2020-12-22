@@ -45,7 +45,7 @@
 </ul>
 <br>
 <p>
-  O obejetivo do sistema é ajudar a gerenciar as espedições e capacidade de cobertura o mais eficiente o possível, de forma que gere o mínimo de custo o possível a nossa empresa. <br><br>
+  O objetivo do sistema é ajudar a gerenciar as espedições e capacidade de cobertura o mais eficiente o possível, de forma que gere o mínimo de custo o possível a nossa empresa. <br><br>
   Dado que um Green Angel faz um atendimento e a cada atendimento se consome uma quantidade x de terminais dos polos (Por padrão a quantidade consumida é 1), os mesmos precisam ser repostos (Via Expedição) a espedição deve acontecer baseado em um nível de cobertura précalculado pelo sistema ou imposto pelo usuário.
   <br><br>
   Os níveis de cobertura são os seguintes:
@@ -97,7 +97,7 @@
         <br>
     </li>
     <li>
-        <b>(BR02)</b><i> - A cobertura do Polo é formada pela média diária de consumo dos últimos 14 dias vezes a quantitadade disponível em estoque</i><br><br>
+        <b>(BR02)</b><i> - A cobertura do Polo é formada pela a quantitadade disponível em estoque dividida pela média diária de consumo dos últimos 14 dias </i><br><br>
     </li>
     <li>
         <b>(BR03)</b><i> - A quantidade disponível em estoque é o resultado entre a subtração da quantidade disponível em estoque vinda das Expedições menos a quantidade de atendimentos do polo</i><br><br>
