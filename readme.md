@@ -22,9 +22,9 @@
     </p>
   </li>
   <li>
-    <b>Terminais</b> - <i> <small> TerminaiEntity( ) </small> </i> : <br>
+    <b>Atendimentos</b> - <i> <small> AttendanceEntity( ) </small> </i> : <br>
     <p>
-      São as nossas Máquinas de pagementos que nossos clientes usam e que nossos Green Angels vendem e entregam para os nossos clientes.
+      São os atendimentos feitos para os nossos clientes através dos Green Angels, os atendimentos consomem os terminais recebidos nas Expedições.
       <br>
     </p>
   </li>
